@@ -1,5 +1,6 @@
 package com.blindkiosk.server;
 
+import com.blindkiosk.server.Model.StoreModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

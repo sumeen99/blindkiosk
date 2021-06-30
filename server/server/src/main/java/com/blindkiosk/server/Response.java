@@ -1,6 +1,7 @@
 package com.blindkiosk.server;
 
 import com.blindkiosk.server.ApiResponse.ApiResponse;
+import com.blindkiosk.server.Model.StoreModel;
 import lombok.Builder;
 
 import java.util.List;

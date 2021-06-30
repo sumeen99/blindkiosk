@@ -1,5 +1,7 @@
 package com.blindkiosk.server;
 
+import com.blindkiosk.server.Model.StoreModel;
+
 import java.util.List;
 
 public class Adapter {

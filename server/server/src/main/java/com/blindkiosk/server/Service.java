@@ -1,6 +1,7 @@
 package com.blindkiosk.server;
 
 
+import com.blindkiosk.server.Model.StoreModel;
 
 @org.springframework.stereotype.Service
 public class Service {

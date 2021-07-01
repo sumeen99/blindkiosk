@@ -2,7 +2,7 @@ package com.blindkiosk.server.Model;
 
 import lombok.*;
 
-import java.util.Map;
+import java.util.List;
 
 @Data
 @Getter
@@ -10,6 +10,6 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SubCategoryModel {
-    private Map<String, FoodModel> food;
+public class FoodModel {
+    private List<String> material;
 }

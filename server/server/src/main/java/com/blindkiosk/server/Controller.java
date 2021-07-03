@@ -14,9 +14,9 @@ public class Controller {
     @Autowired
     private Service service;//이부분 다음에 this.service=service로 해야할것같음 지금은 넘어가자
 
-    @RequestMapping(method = RequestMethod.GET,value = "/{x}/{y}")
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Response get(@PathVariable(value = "x") double x,@PathVariable(value = "y") double y){
+    public Response get(@RequestParam(value = "x") double x,@RequestParam(value = "y") double y){
         List<String> errors=new ArrayList<>();
         List<String> storeList= new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class Controller {
             errors.add(e.getMessage());
         }
 
-        return storeList;
+        return Adapter.storeListResponse(storeList,errors);
     }
     /*
     *   @RequestMapping(method = RequestMethod.GET,value = "/{id}")

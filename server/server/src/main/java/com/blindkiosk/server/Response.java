@@ -6,12 +6,19 @@ import lombok.Builder;
 
 import java.util.List;
 
-public class Response extends ApiResponse<StoreModel> {
+public class Response extends ApiResponse<List<String>> {
 
     @Builder
-    public Response(final StoreModel storeModel, final List<String> errors){
+    public Response(final List<String> storeModel, final List<String> errors){
         super(storeModel);
         this.setErrors(errors);
     }
+    /*
+    *  @Builder
+    public Response(final StoreModel storeModel, final List<String> errors){
+        super(storeModel);
+        this.setErrors(errors);
+    }*/
+
 
 }

@@ -25,7 +25,9 @@ public class StoreActivity extends AppCompatActivity {
     TextView position;
 
     Button btnSpeech;
+    Button btnOK;
     String storeNumber;
+
     TextView answer;
 
     STT stt;
@@ -35,7 +37,8 @@ public class StoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_store);
 
         btnSpeech = (Button) findViewById(R.id.btnSpeech);
-        position = (TextView) findViewById(R.id.position);
+        btnOK = (Button)findViewById(R.id.btnOK);
+        position = (TextView) findViewById(R.id.viewPosition);
         answer = (TextView) findViewById((R.id.answer));
 
 
@@ -52,7 +55,7 @@ public class StoreActivity extends AppCompatActivity {
                     }
                 }
             });
-            stt = new STT(btnSpeech,answer,getIntent(),getApplicationContext(), StoreActivity.this,textToSpeech);
+            stt = new STT(btnSpeech,btnOK,answer,getIntent(),getApplicationContext(), StoreActivity.this,textToSpeech,Mode.NUMBER_MODE,storeNumber);
             Toast.makeText(getApplicationContext(), "퍼미션 체크 완료.", Toast.LENGTH_SHORT).show();
         }
 
@@ -65,9 +68,9 @@ public class StoreActivity extends AppCompatActivity {
             try {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, mLocationListener);
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 1, mLocationListener);
-                stt.getUserSpeak("화면을 눌러 가게 번호를 말씀해주세요.");
-            }catch (SecurityException ex){
 
+            }catch (SecurityException ex){
+                Toast.makeText(getApplicationContext(), "탐색 실패", Toast.LENGTH_SHORT).show();
             }
 
     }
@@ -76,12 +79,12 @@ public class StoreActivity extends AppCompatActivity {
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            String provider = location.getProvider();
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
-            double altitude = location.getAltitude();
-            position.setText("위치정보 : " + provider + "\n" + "위도 : " + latitude + "\n" + "경도 : " + longitude + "\n" + "고도 : " + altitude);
-            Toast.makeText(getApplicationContext(), "위치정보 입력.", Toast.LENGTH_SHORT).show();
+            position.setText("위도 : " + latitude + "\n" + "경도 : " + longitude);
+            Toast.makeText(getApplicationContext(), "위도 : " + latitude + "\n" + "경도 : " + longitude , Toast.LENGTH_SHORT).show();
+            textToSpeech.speak("사용자 위치를 탐색 완료하였습니다.", TextToSpeech.QUEUE_ADD, null);
+            chooseStore();
         }
 
         @Override
@@ -95,4 +98,11 @@ public class StoreActivity extends AppCompatActivity {
         }
     };
 
+
+    void chooseStore(){
+
+
+        stt.getUserSpeak("화면 상단을 눌러 가게 번호를 말씀해주세요.");
+
+    }
 }

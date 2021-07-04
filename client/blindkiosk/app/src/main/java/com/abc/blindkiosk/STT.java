@@ -22,20 +22,32 @@ import java.util.ArrayList;
 public class STT {
     TextToSpeech textToSpeech;
     Button btnSpeech;
+    Button btnOK;
     SpeechRecognizer mRecognizer;
     TextView answer;
     Intent intent;
     Context context;
     Activity activity;
+    String answerInfo;
+    int mode;
 
-    STT(Button btnSpeech, TextView answer, Intent intent, Context context, Activity activity, TextToSpeech textToSpeech){
+
+    Number number;
+    STT(Button btnSpeech, Button btnOK, TextView answer, Intent intent, Context context, Activity activity, TextToSpeech textToSpeech, int mode, String answerInfo){
 
         this.btnSpeech = btnSpeech;
+        this.btnOK = btnOK;
         this.answer = answer;
         this.intent = intent;
         this.context = context;
         this.activity = activity;
         this.textToSpeech = textToSpeech;
+        this.answerInfo = answerInfo;
+        this.mode = mode;
+        if(mode == Mode.NUMBER_MODE){
+            number = new Number();
+        }
+
 
         if (Build.VERSION.SDK_INT >= 23) {
             ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.INTERNET,Manifest.permission.RECORD_AUDIO},1);
@@ -83,7 +95,6 @@ public class STT {
 
         @Override
         public void onEndOfSpeech() {
-
         }
 
         @Override
@@ -119,7 +130,7 @@ public class STT {
                     break;
                 case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
                     message = "말하는 시간초과";
-                    textToSpeech.speak("말하는 시간이 초과되었습니다. 화면을 다시 시도해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.speak("말하는 시간이 초과되었습니다. 화면 상단을 눌러 다시 시도해주세요.", TextToSpeech.QUEUE_ADD, null);
                     break;
                 default:
                     message = "알 수 없는 오류임";
@@ -135,6 +146,22 @@ public class STT {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             for (int i = 0; i < matches.size(); i++) {
                 answer.setText(matches.get(i));
+            }
+
+            if(mode == Mode.NUMBER_MODE) {
+                answerInfo = number.findNumber(answer.getText().toString());
+                Toast.makeText(context, "사용자 답변 확인.", Toast.LENGTH_SHORT).show();
+                if (answerInfo == null) {
+                    textToSpeech.speak("번호를 인식하지 못하였습니다. 화면 상단을 눌러 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                } else {
+                    textToSpeech.speak("선택하신 번호가 " + answerInfo + "번이 맞으면 화면 하단을 눌러주시고 아니면 화면 상단을 눌러 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    btnOK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(context, "다음 단계", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }
 

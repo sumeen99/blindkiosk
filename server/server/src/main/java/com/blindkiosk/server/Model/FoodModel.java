@@ -18,7 +18,7 @@ public class FoodModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//고유번호
 
-
+    @ElementCollection
     private List<String> material=new ArrayList<>();
 
 }

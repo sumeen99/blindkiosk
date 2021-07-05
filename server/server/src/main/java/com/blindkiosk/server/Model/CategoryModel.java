@@ -2,7 +2,7 @@ package com.blindkiosk.server.Model;
 
 import lombok.*;
 
-import javax.persistence.*;
+//import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,14 +10,14 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
-@Entity
-public class CategoryModel {
+//@Entity
+public class CategoryModel {/*
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//고유번호
 
     @OneToMany(mappedBy="subCategoryModel")
-    private Map<String,SubCategoryModel> subCategory=new HashMap<>();
+    private Map<String,SubCategoryModel> subCategory=new HashMap<>();*/
 }

@@ -3,7 +3,7 @@ package com.blindkiosk.server.Model;
 
 import lombok.*;
 
-import javax.persistence.*;
+//import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,15 +11,15 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
-@Entity
-public class MenuModel {
+//@Entity
+public class MenuModel {/*
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//고유번호
 
     @OneToMany(mappedBy="categoryModel")
-    private Map<String,CategoryModel> category=new HashMap<>();
+    private Map<String,CategoryModel> category=new HashMap<>();*/
 }

@@ -9,6 +9,6 @@ public class api {
     @Test
     public void putStoreList() throws ParseException {
         SearchApi searchApi= new SearchApi();
-        System.out.println(searchApi.search(127.07353705226912,37.54717476516024,  15));
+        //System.out.println(searchApi.search(127.07353705226912,37.54717476516024,  15));
     }
 }

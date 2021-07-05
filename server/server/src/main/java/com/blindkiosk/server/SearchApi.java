@@ -28,12 +28,19 @@ public class SearchApi {
     public List<String> search(double x, double y, int radius) throws ParseException {
 
 
-        String apiURL = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6&x="+x+"&y="+y+"&radius="+radius+"&sort=distance"; // json 결과 //
+        String apiURL_restaurant = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=FD6&x="+x+"&y="+y+"&radius="+radius+"&sort=distance"; // json 결과 //
+        String apiURL_cafe = "https://dapi.kakao.com/v2/local/search/category.json?category_group_code=CE7&x="+x+"&y="+y+"&radius="+radius+"&sort=distance";
         String apiKey = "c420b0e6d0b3acc0a3348d7e95f11ead";
-        String responseBody = get(apiURL, apiKey);
-        System.out.println(responseBody);
-        return json(responseBody);
-
+        String responseBody_restaurant = get(apiURL_restaurant, apiKey);
+        String responseBody_cafe = get(apiURL_cafe, apiKey);
+        List<String> restaurant=json(responseBody_restaurant);
+        System.out.println(responseBody_cafe);
+        System.out.println(responseBody_restaurant);
+        List<String> cafe=json(responseBody_cafe);
+        List<String> store=new ArrayList<>();
+        store.addAll(restaurant);
+        store.addAll(cafe);
+        return store;
     }
 
 

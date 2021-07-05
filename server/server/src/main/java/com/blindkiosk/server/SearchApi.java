@@ -34,7 +34,6 @@ public class SearchApi {
         String responseBody_restaurant = get(apiURL_restaurant, apiKey);
         String responseBody_cafe = get(apiURL_cafe, apiKey);
         List<String> restaurant=json(responseBody_restaurant);
-        System.out.println(responseBody_cafe);
         System.out.println(responseBody_restaurant);
         List<String> cafe=json(responseBody_cafe);
         List<String> store=new ArrayList<>();

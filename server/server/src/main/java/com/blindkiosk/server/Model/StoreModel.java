@@ -2,17 +2,17 @@ package com.blindkiosk.server.Model;
 
 import lombok.*;
 
-import javax.persistence.*;
+//import javax.persistence.*;
 
 
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Builder
-@Entity
-public class StoreModel {
+//@Entity
+public class StoreModel {/*
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;//가게 고유번호
@@ -21,5 +21,5 @@ public class StoreModel {
     private String storeName; //가게명
 
     @OneToOne
-    private MenuModel menu;//메뉴
+    private MenuModel menu;//메뉴*/
 }

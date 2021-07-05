@@ -12,7 +12,7 @@ import java.util.Map;
 @org.springframework.stereotype.Service
 public class Service {
 
-    public StoreModel get(final Long id){
+   /* public StoreModel get(final Long id){
         MenuModel menuModel= new MenuModel();
         CategoryModel categoryModel = new CategoryModel();
         SubCategoryModel subCategoryModel= new SubCategoryModel();
@@ -50,7 +50,7 @@ public class Service {
                 .storeName("맥도날드")
                 .menu(menuModel)
                 .build();
-    }
+    }*/
 
     public List<String> putStoreList(double x,double y) throws ParseException {
         SearchApi searchApi= new SearchApi();

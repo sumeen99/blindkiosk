@@ -9,11 +9,10 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/Menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="588dp"
-        android:text="Choose Menu"
-        />
+        android:id="@+id/btn"
+        android:layout_width="411dp"
+        android:layout_height="260dp"
+        android:textSize="50sp"
+        android:text="NEXT" />
 
 </LinearLayout>

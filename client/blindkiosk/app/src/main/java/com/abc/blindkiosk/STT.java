@@ -1,139 +1,162 @@
 package com.abc.blindkiosk;
 
 import android.Manifest;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
-import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
-import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
-
-import java.security.MessageDigest;
 import java.util.ArrayList;
 
-public class STT extends AppCompatActivity {
+public class STT {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.stt_activity);
-        getAppKeyHash();
+    TextToSpeech textToSpeech;
+    Button btnSpeech;
+    SpeechRecognizer mRecognizer;
+    TextView answer;
+    Intent intent;
+    Context context;
+    Activity activity;
+    ArrayList<String> matches;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
-            } else {
-                // 사용자가 거부하면서 다시 묻지 않기를 클릭.. 권한이 없다고 사용자에게 직접 알림.
-            }
+
+    public STT(Button btnSpeech, TextView textView){
+
+        this.btnSpeech = btnSpeech;
+        this.answer = textView;
+        //this.answer = answer;
+        //this.intent = intent;
+        //this.context = context;
+        //this.activity = activity;
+        //this.textToSpeech = textToSpeech;
+
+
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.INTERNET,Manifest.permission.RECORD_AUDIO},1);
         } else {
-            startUsingSpeechSDK();
+            intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,context.getPackageName());
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+
         }
 
-        //SDK초기화
-        SpeechRecognizerManager.getInstance().initializeLibrary(this);
+        getUserSpeak();
+    }
 
-        //클라이언트 생성
-        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().setServiceType(SpeechRecognizerClient.SERVICE_TYPE_DICTATION);
 
-        SpeechRecognizerClient client = builder.build();
-
-        client.startRecording(true);
-
-        client.setSpeechRecognizeListener(new SpeechRecognizeListener() {
+    void getUserSpeak() {
+        //textToSpeech.speak(guideText, TextToSpeech.QUEUE_ADD, null);
+        btnSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onReady() {
-                //To change body of implemented methods use File | Settings | File Templates.
-                Toast.makeText(getApplicationContext(),"음성인식 시작",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int errorCode, String errorMsg) {
-
-            }
-
-            @Override
-            public void onPartialResult(String partialResult) {
-
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-                //TODO implement interface SpeechRecognizeListener method
-                //이거는 음성데이터 텍스트 저장 용도
-                ArrayList<String> texts =  results.getStringArrayList(SpeechRecognizerClient.KEY_RECOGNITION_RESULTS);
-
-                //이거는 정확도 측정 및 저장 용도
-                //ArrayList<Integer> confs =   results.getIntegerArrayList(SpeechRecognizerClient.KEY_CONFIDENCE_VALUES);
-            }
-
-            @Override
-            public void onAudioLevel(float audioLevel) {
-
-            }
-
-            @Override
-            public void onFinished() {
-
+            public void onClick(View v) {
+                mRecognizer = SpeechRecognizer.createSpeechRecognizer(activity); //
+                mRecognizer.setRecognitionListener(listener);   //모든 콜백을 수신하는 리스너 설정
+                mRecognizer.startListening(intent);
             }
         });
 
-        client.cancelRecording();
-
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE:
-                if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    startUsingSpeechSDK();
-                } else {
-                    finish();
-                }
-                break;
-            default:
-                break;
+
+
+    private RecognitionListener listener = new RecognitionListener() {
+        @Override
+        public void onReadyForSpeech(Bundle params) {
+            Toast.makeText(context, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
         }
-    }
 
-    private void getAppKeyHash () {
-        try {
-            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md;
-                md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                String something = new String(Base64.encode(md.digest(), 0));
-                Log.e("Hash key", something);
+        @Override
+        public void onBeginningOfSpeech() {
+
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB) {
+
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer) {
+
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+        }
+
+        @Override
+        public void onError(int error) {
+            String message;
+
+            switch (error) {
+                case SpeechRecognizer.ERROR_AUDIO:
+                    message = "오디오 에러";
+                    break;
+                case SpeechRecognizer.ERROR_CLIENT:
+                    message = "클라이언트 에러";
+                    break;
+                case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                    message = "퍼미션 없음";
+                    textToSpeech.speak("설정에서 마이크 권한을 허용해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK:
+                    message = "네트워크 에러";
+                    break;
+                case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                    message = "네트웍 타임아웃";
+                    break;
+                case SpeechRecognizer.ERROR_NO_MATCH:
+                    message = "찾을 수 없음";
+                    break;
+                case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                    message = "RECOGNIZER가 바쁨";
+                    textToSpeech.speak("잠시 후에 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    break;
+                case SpeechRecognizer.ERROR_SERVER:
+                    message = "서버가 이상함";
+                    break;
+                case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                    message = "말하는 시간초과";
+                    textToSpeech.speak("말하는 시간이 초과되었습니다. 화면 상단을 눌러 다시 시도해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    break;
+                default:
+                    message = "알 수 없는 오류임";
+                    break;
             }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            Log.e("name not found", e.toString());
+
+            Toast.makeText(context, "에러가 발생하였습니다. : " + message, Toast.LENGTH_SHORT).show();
+
         }
-    }
 
-    public void onDestroy() {
-        super.onDestroy();
+        @Override
+        public void onResults(Bundle results) {
+            matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            for (int i = 0; i < matches.size(); i++) {
+                answer.setText(matches.get(i));
+            }
 
-        SpeechRecognizerManager.getInstance().finalizeLibrary();
-    }
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults) {
+
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params) {
+
+        }
+    };
 }

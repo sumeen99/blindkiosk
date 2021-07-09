@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.abc.blindkiosk">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
 
     <application
         android:allowBackup="true"
@@ -13,18 +16,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="b7f44135afa83fcbe8772319a133fbed" />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Choose_Menu"/>
+        <activity android:name=".Choose_Menu_2"/>
+        <activity android:name=".Choose_Menu_3"/>
 
-        <activity android:name=".STT"/>
 
     </application>
 

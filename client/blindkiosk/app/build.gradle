@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.abc.blindkiosk"
-        minSdkVersion 17
+        minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -32,16 +32,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 
-
-
-
-    // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-
     // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation 'com.kakao.sdk:newtone:6.0.1'
+
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Number {
+    Set<String> zero = new HashSet<String>();
     Set<String> one = new HashSet<String>();
     Set<String> two = new HashSet<String>();
     Set<String> three = new HashSet<String>();
@@ -14,6 +15,11 @@ public class Number {
     Set<String> five = new HashSet<String>();
     Map<String, Set<String>> numberMap = new HashMap<String, Set<String>>();
     Number(){
+        zero.add("0");
+        zero.add("영");
+        numberMap.put("0",zero);
+
+
         one.add("1");
         one.add("첫");
         one.add("일");

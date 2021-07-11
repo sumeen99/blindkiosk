@@ -1,9 +1,7 @@
 package com.blindkiosk.server.Controller;
 
 import com.blindkiosk.server.Adapter;
-import com.blindkiosk.server.Model.CategoryModel;
 import com.blindkiosk.server.Model.FoodModel;
-import com.blindkiosk.server.Response.CategoryResponse;
 import com.blindkiosk.server.Response.FoodResponse;
 import com.blindkiosk.server.Service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;

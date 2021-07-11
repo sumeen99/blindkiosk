@@ -1,18 +1,31 @@
-package com.blindkiosk.server;
+package com.blindkiosk.server.Service;
 
 
 import com.blindkiosk.server.Model.*;
+import com.blindkiosk.server.Repository.StoreRepository;
+import com.blindkiosk.server.SearchApi;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-@org.springframework.stereotype.Service
-public class Service {
+@Service
+public class StoreService {
 
-   /* public StoreModel get(final Long id){
+    @Autowired
+    private final StoreRepository storeRepository;
+    public StoreService(StoreRepository storeRepository){this.storeRepository=storeRepository;}
+
+    public StoreModel getMenu(String storeName){
+        return storeRepository.findByName(storeName);
+    }
+
+
+
+
+
+    /*public StoreModel get(final Long id){
         MenuModel menuModel= new MenuModel();
         CategoryModel categoryModel = new CategoryModel();
         SubCategoryModel subCategoryModel= new SubCategoryModel();

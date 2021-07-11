@@ -1,8 +1,10 @@
 package com.blindkiosk.server.Model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-//import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +12,23 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 @Builder
 //@Entity
-public class FoodModel {/*
+@Document(collection = "Food")
+public class FoodModel {
+   // @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;//고유번호
+    private String _id;//고유번호
+    private String name;
 
-    @ElementCollection
-    private List<String> material=new ArrayList<>();*/
+    @Field("subcategory_id")
+    private String subcategoryId;
+
+    //@ElementCollection
+    private List<String> material;
+    private List<String> size;
+    private List<String> price;
 
 }

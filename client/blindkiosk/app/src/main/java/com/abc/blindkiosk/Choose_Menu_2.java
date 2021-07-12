@@ -51,7 +51,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //tts = new TTS("카테고리를 선택해 주세요.", this);
+
 
         int flag;
         while(true){
@@ -59,7 +59,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
             if(flag != -1){
                 break;
             } else{
-                //TTS tts_re = new TTS("카테고리를 다시 선택해주세요.", this);
+
             }
         }
 

@@ -1,23 +1,27 @@
 package com.blindkiosk.server.Model;
 
 import lombok.*;
-
-//import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Data
 @Getter
 @Setter
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 @Builder
 //@Entity
-public class SubCategoryModel {/*
+@Document(collection = "SubCategory")
+public class SubCategoryModel {
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;//고유번호
+    private String _id;//고유번호
+    private String name;
+    @Field("category_id")
+    private String categoryId;
 
-    @OneToMany(mappedBy="foodModel")
-    private Map<String, FoodModel> food=new HashMap<>();*/
+    //@OneToMany(mappedBy="foodModel")
+    //private Map<String, FoodModel> food=new HashMap<>();
 }

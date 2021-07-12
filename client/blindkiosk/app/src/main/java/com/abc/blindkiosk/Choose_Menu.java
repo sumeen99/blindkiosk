@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+
+import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,6 +32,7 @@ public class Choose_Menu extends AppCompatActivity {
     Button btn;
     TextView textView;
     String num;
+
     Intent intent;
     Context context;
     TextToSpeech textToSpeech;
@@ -35,10 +40,13 @@ public class Choose_Menu extends AppCompatActivity {
     Number number;
     String numberinfo;
 
+    String storeName;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subactivity);
+
 
         textView = (TextView) findViewById(R.id.textview);
         btn = (Button) findViewById(R.id.btn);
@@ -70,6 +78,7 @@ public class Choose_Menu extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+
         getUserSpeak("메뉴 선택 방식을 선택해주세요");
         textToSpeech.speak("1번. 전체 메뉴 읽기", TextToSpeech.QUEUE_ADD, null);
         textToSpeech.speak("2번. 카테고리별 메뉴 선택하기", TextToSpeech.QUEUE_ADD, null);
@@ -87,6 +96,7 @@ public class Choose_Menu extends AppCompatActivity {
             startActivity(intent);
         } else{
             textToSpeech.speak("잘못된 대답입니다. 버튼을 누르고 다시 답해주세요", TextToSpeech.QUEUE_ADD, null);
+
         }
     }
 

@@ -1,6 +1,9 @@
 package com.blindkiosk.server.Model;
 
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+//import org.springframework.data.annotation.Id;
 
 //import javax.persistence.*;
 
@@ -9,17 +12,19 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-//@AllArgsConstructor
+@AllArgsConstructor
 @Builder
 //@Entity
-public class StoreModel {/*
+@Document(collection = "Store")
+public class StoreModel {
+  //  @Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;//가게 고유번호
+    private String _id;//가게 고유번호
+
+    //@Id
+
+    private String name; //가게명
 
 
-    private String storeName; //가게명
-
-    @OneToOne
-    private MenuModel menu;//메뉴*/
 }

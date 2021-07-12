@@ -64,7 +64,7 @@ public class StoreActivity extends AppCompatActivity {
         btnSpeech = (Button) findViewById(R.id.btnSpeech);
         btnOK = (Button) findViewById(R.id.btnOK);
         position = (TextView) findViewById(R.id.TextViewLocation);
-        answer = (TextView) findViewById((R.id.TextViewAnswer));
+        answer = (TextView) findViewById(R.id.TextViewAnswer);
 
         intent = getIntent();
         context = getApplicationContext();

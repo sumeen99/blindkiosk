@@ -19,7 +19,7 @@
 
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".OrderActivity"></activity>
+        <activity android:name=".OrderActivity"/>
         <activity android:name=".StoreActivity" />
 
         <activity android:name=".MainActivity">
@@ -31,6 +31,7 @@
         <activity android:name=".Choose_Menu"/>
         <activity android:name=".Choose_Menu_2"/>
         <activity android:name=".Choose_Menu_3"/>
+        <activity android:name=".LastOrder"/>
 
 
     </application>

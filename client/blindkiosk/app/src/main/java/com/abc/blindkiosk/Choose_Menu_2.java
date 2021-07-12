@@ -15,8 +15,8 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     TextView textView;
     Button btn;
-    TTS tts;
-    STT stt;
+    //TTS tts;
+    //STT stt;
     ArrayList<String> answer;
 
     //메뉴
@@ -41,11 +41,9 @@ public class Choose_Menu_2 extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stt = new STT(btn, textView);
+                //stt = new STT(btn, textView);
             }
         });
-
-        tts = new TTS(textView,getApplicationContext());
 
     }
 
@@ -53,16 +51,15 @@ public class Choose_Menu_2 extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        tts.speakToUser("카테고리를 선택해 주세요.");
+
 
         int flag;
         while(true){
             flag = choose_category();
             if(flag != -1){
-
                 break;
             } else{
-                tts.speakToUser("카테고리를 다시 선택해주세요.");
+
             }
         }
 
@@ -72,8 +69,8 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     int choose_category() {
 
-        stt = new STT(btn, textView);
-        answer = stt.matches;
+        //stt = new STT(btn, textView);
+        //answer = stt.matches;
         int flag = -1;
 
         for (int i = 0; i < categoryList.size(); i++){
@@ -89,8 +86,9 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     void choose_menu(int category_num) {
 
-        stt = new STT(btn, textView);
-        answer = stt.matches;
+        //stt = new STT(btn, textView);
+        //String asw = stt.matches.get(0);
+        //String[] array = asw.split(" ");
 
 
 

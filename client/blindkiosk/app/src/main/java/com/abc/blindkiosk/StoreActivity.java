@@ -286,6 +286,9 @@ public class StoreActivity extends AppCompatActivity {
             textToSpeech.speak("주변 가게가 없습니다.", TextToSpeech.QUEUE_ADD, null);
             return;
         }
+        if(set*5>stores.size()){
+            set = 0;
+        }
         textToSpeech.speak("주변 가게 목록은", TextToSpeech.QUEUE_ADD, null);
         for (int i = set * 5; i < set * 5 + 5; i++) {
             if (i < stores.size()) {
@@ -302,5 +305,8 @@ public class StoreActivity extends AppCompatActivity {
         String storeName = stores.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1);
         Log.d("StoreName", storeName);
         textToSpeech.speak(storeName + "을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+        Intent storeNameIntent = new Intent(this,Choose_Menu.class);
+        storeNameIntent.putExtra("storeName",storeName);
+        startActivity(storeNameIntent);
     }
 }

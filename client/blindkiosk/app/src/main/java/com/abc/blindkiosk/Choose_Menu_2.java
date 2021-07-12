@@ -45,13 +45,15 @@ public class Choose_Menu_2 extends AppCompatActivity {
             }
         });
 
+        tts = new TTS(textView,getApplicationContext());
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        tts = new TTS("카테고리를 선택해 주세요.");
+        tts.speakToUser("카테고리를 선택해 주세요.");
 
         int flag;
         while(true){
@@ -60,7 +62,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
                 break;
             } else{
-                TTS tts_re = new TTS("카테고리를 다시 선택해주세요.");
+                tts.speakToUser("카테고리를 다시 선택해주세요.");
             }
         }
 

@@ -14,9 +14,10 @@ public class TTS {
     TextView textView;
     Context context;
 
-    TTS (String menu) {
+    TTS (TextView textView, Context context) {
 
         this.textView = textView;
+        this.context = context;
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -26,8 +27,10 @@ public class TTS {
             }
         });
 
-        tts.speak(menu, TextToSpeech.QUEUE_FLUSH, null);
 
+    }
+    void speakToUser(String guide){
+        tts.speak(guide, TextToSpeech.QUEUE_FLUSH, null);
     }
 
 }

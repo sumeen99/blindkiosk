@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         intent = new Intent(this, StoreActivity.class);
+        //intent = new Intent(this, Choose_Menu.class);
         Button btnStore = (Button) findViewById(R.id.btnStore);
         btnStore.setOnClickListener(new View.OnClickListener() {
             @Override

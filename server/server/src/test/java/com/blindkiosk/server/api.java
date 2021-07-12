@@ -2,6 +2,7 @@ package com.blindkiosk.server;
 
 
 import com.blindkiosk.server.Repository.FoodRepository;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,11 +21,11 @@ public class api {
     @Autowired
     FoodRepository repository;
 
-    /*@Test
+    @Test
     public void read(){
         System.out.println(repository.findBySubcategoryId("60e8964c81a13384e4109fcc"));
         System.out.println("hihihihi!!");
-    }*/
+    }
 
 
 }

@@ -306,7 +306,7 @@ public class StoreActivity extends AppCompatActivity {
         Log.d("StoreName", storeName);
         textToSpeech.speak(storeName + "을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
         Intent storeNameIntent = new Intent(this,Choose_Menu.class);
-        storeNameIntent.putExtra("storeName",storeName);
+        storeNameIntent.putExtra("storeName","맥도날드");
         startActivity(storeNameIntent);
     }
 }

@@ -37,7 +37,7 @@ public class Choose_Menu extends AppCompatActivity {
     Context context;
     TextToSpeech textToSpeech;
     SpeechRecognizer mRecognizer;
-    Number number;
+    Number number = new Number();
     String numberinfo;
 
     String storeName;
@@ -53,51 +53,40 @@ public class Choose_Menu extends AppCompatActivity {
         intent = getIntent();
         context = getApplicationContext();
 
-        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        storeName = intent.getStringExtra("storeName");
+
+        if (Build.VERSION.SDK_INT >= 23) {
             ActivityCompat.requestPermissions(Choose_Menu.this, new String[]{Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO}, 1);
-        } else {
-            intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
-
-            textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS) {
-                        textToSpeech.setLanguage(Locale.KOREAN);
-                    }
-                }
-            });
-
-            Toast.makeText(getApplicationContext(), "퍼미션 체크 완료.", Toast.LENGTH_SHORT).show();
         }
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeech.setLanguage(Locale.KOREAN);
+                    chooseOrderMode();
+                }
+            }
+        });
+
+
+
+        Toast.makeText(getApplicationContext(), "퍼미션 체크 완료.", Toast.LENGTH_SHORT).show();
+
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-        getUserSpeak("메뉴 선택 방식을 선택해주세요");
-        textToSpeech.speak("1번. 전체 메뉴 읽기", TextToSpeech.QUEUE_ADD, null);
-        textToSpeech.speak("2번. 카테고리별 메뉴 선택하기", TextToSpeech.QUEUE_ADD, null);
-        textToSpeech.speak("3번. 바로 메뉴 선택하기", TextToSpeech.QUEUE_ADD, null);
-
-
-        if(numberinfo == "1"){
-            Intent intent = new Intent();
-            startActivity(intent);
-        } else if(numberinfo == "2"){
-            Intent intent = new Intent(this, Choose_Menu_2.class);
-            startActivity(intent);
-        } else if(numberinfo == "3"){
-            Intent intent = new Intent(this, Choose_Menu_3.class);
-            startActivity(intent);
-        } else{
-            textToSpeech.speak("잘못된 대답입니다. 버튼을 누르고 다시 답해주세요", TextToSpeech.QUEUE_ADD, null);
-
-        }
+    void chooseOrderMode() {
+        Toast.makeText(getApplicationContext(), "주문 모드 선택.", Toast.LENGTH_SHORT).show();
+        textToSpeech.speak("주문 모드는", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("1번 전체 메뉴 읽기.", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("2번 카테고리별 메뉴 선택하기.", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("3번 바로 메뉴 선택하기.", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
+        getUserSpeak("화면을 눌러 원하는 메뉴 선택 방식을 말씀해주세요.");
     }
 
     void getUserSpeak(String guideText) {
@@ -188,9 +177,7 @@ public class Choose_Menu extends AppCompatActivity {
             for (int i = 0; i < matches.size(); i++) {
                 textView.setText(matches.get(i));
             }
-
-            numberinfo = number.findNumber(textView.getText().toString());
-
+            goMenuActivity();
         }
 
         @Override
@@ -204,6 +191,22 @@ public class Choose_Menu extends AppCompatActivity {
         }
     };
 
+    void goMenuActivity() {
+        numberinfo = number.findNumber(textView.getText().toString());
+        if (numberinfo == "1") {
+            Intent intent1 = new Intent(this, Choose_Menu_1.class);
+            intent1.putExtra("storeName",storeName);
+            startActivity(intent1);
 
+        } else if (numberinfo == "2") {
+            //Intent intent = new Intent(this, Choose_Menu_2.class);
+            //startActivity(intent);
+        } else if (numberinfo == "3") {
+            //Intent intent = new Intent(this, Choose_Menu_3.class);
+            //startActivity(intent);
+        } else {
+            textToSpeech.speak("번호를 인식하지 못하였습니다. 화면을 누르고 다시 답해주세요", TextToSpeech.QUEUE_ADD, null);
 
+        }
+    }
 }

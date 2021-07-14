@@ -1,0 +1,14 @@
+guide for 영현,쥬미
+
+추가데이터
+
+1. id로 모든 메뉴 한번에 불러오기
+쿼리 = /allfood?id={storeId}
+ex)http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/allfood?id=60e8903981a13384e4109faa
+
+2. food DB속 cusotm_id로 custom데이터 불러오기
+쿼리 = /custom?id={customId}
+ex)http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/custom?id=60eec497657b01f91546e511
+
+참고 custom 데이터 속 price가 null이라면 가격이 없는 거임
+ex) 토핑은 pirce가 존재하므로 가격 존재, 얼음은 price가 null임으로 가격x

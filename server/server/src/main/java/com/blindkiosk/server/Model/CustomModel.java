@@ -13,29 +13,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//@Entity
-@Document(collection = "Food")
-public class FoodModel {
-   // @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+@Document(collection = "Custom")
+public class CustomModel {
+
     @Id
-    private String _id;//고유번호
+    private String _id;
     private String name;
 
-    @Field("subcategory_id")
-    private String subcategoryId;
-
+    @Field("store_name")
+    private String storeName;
     @Field("store_id")
     private String storeId;
-    
-    private List<String> temp;//icee,hot여부
-
-    @Field("custom_id")
-    private List<String> customId;
-
-    //@ElementCollection
-    private List<String> material;
-    private List<String> size;
+    private List<String> type;
     private List<String> price;
 
 }

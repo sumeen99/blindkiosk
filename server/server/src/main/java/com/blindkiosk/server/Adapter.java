@@ -1,9 +1,6 @@
 package com.blindkiosk.server;
 
-import com.blindkiosk.server.Model.CategoryModel;
-import com.blindkiosk.server.Model.FoodModel;
-import com.blindkiosk.server.Model.StoreModel;
-import com.blindkiosk.server.Model.SubCategoryModel;
+import com.blindkiosk.server.Model.*;
 import com.blindkiosk.server.Response.*;
 
 import java.util.List;
@@ -28,5 +25,9 @@ public class Adapter {
 
     public static FoodResponse foodResponse(final List<FoodModel> foodModels, final List<String> errors){
         return FoodResponse.builder().foodModels(foodModels).errors(errors).build();
+    }
+
+    public static CustomResponse customResponse(final List<CustomModel> customModels, final List<String> errors){
+        return CustomResponse.builder().customModels(customModels).errors(errors).build();
     }
 }

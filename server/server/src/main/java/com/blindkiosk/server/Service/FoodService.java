@@ -20,4 +20,10 @@ public class FoodService {
     public List<FoodModel> getFood(String id){
         return foodRepository.findBySubcategoryId(id);
     }
+
+    public List<FoodModel> getAllFood(String id){
+        return foodRepository.findByStoreId(id);
+    }
+
+
 }

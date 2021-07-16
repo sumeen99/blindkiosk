@@ -28,7 +28,7 @@ public class FoodModel {
     @Field("store_id")
     private String storeId;
     
-    private List<String> temp;//icee,hot여부
+    private boolean temp;//icee,hot여부
 
     @Field("custom_id")
     private List<String> customId;

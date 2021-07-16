@@ -11,15 +11,56 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MenuAPI {
-    String accessMenu(String name){
+    String accessMenu(String name) {
         List<String> list = null;
         try {
-            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/menu?name="+name);
+            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/menu?name=" + name);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+            Log.d("Chk", "################");
+
+            String line = "";
+            String result = "";
+            BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+            while ((line = bf.readLine()) != null) {
+                result = result.concat(line);
+            }
+
+            Log.d("Chk", result);
+            Log.d("Chk", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            JSONObject jsonObject = new JSONObject(result);
+            JSONObject storeObject = jsonObject.getJSONObject("data");
+            String storeId = storeObject.getString("_id");
+            return storeId;
+
+        } catch (MalformedURLException e) {
+            Log.d("Chk", "111111111");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d("Chk", "222222222");
+            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.d("Chk", "333333333");
+            e.printStackTrace();
+        }
+        Log.d("Chk", "?????????????????????????????");
+        return null;
+    }
+
+    List<MenuInfo> accessCategory(String id) {
+        List<MenuInfo> list = null;
+        try {
+            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/category?id=" + id);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -35,11 +76,21 @@ public class MenuAPI {
                 result = result.concat(line);
             }
 
-            Log.d("Chk",result);
+            Log.d("Chk", result);
             JSONObject jsonObject = new JSONObject(result);
-            JSONObject storeObject = jsonObject.getJSONObject("data");
-            String storeId = storeObject.getString("_id");
-            return storeId;
+            JSONArray dataArray = (JSONArray) jsonObject.get("data");
+
+            list = new ArrayList<MenuInfo>();
+
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject categoryObject = dataArray.getJSONObject(i);
+                MenuInfo category = new MenuInfo(
+                        categoryObject.getString("_id"),
+                        categoryObject.getString("storeId"),
+                        categoryObject.getString("name"));
+                list.add(category);
+            }
+            return list;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -51,10 +102,10 @@ public class MenuAPI {
         return null;
     }
 
-    String accessCategory(String id){
-        List<String> list = null;
+    List<MenuInfo> accessSubcategory(String id) {
+        List<MenuInfo> list = null;
         try {
-            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/category?id="+id);
+            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/subcategory?id=" + id);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
@@ -70,12 +121,144 @@ public class MenuAPI {
                 result = result.concat(line);
             }
 
-            Log.d("Chk",result);
+            Log.d("Chk", result);
             JSONObject jsonObject = new JSONObject(result);
-            JSONArray categoryArray = (JSONArray) jsonObject.get("data");
-            //String storeId = storeObject.getString("_id");
-            //return storeId;
+            JSONArray dataArray = (JSONArray) jsonObject.get("data");
 
+            list = new ArrayList<MenuInfo>();
+
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject categoryObject = dataArray.getJSONObject(i);
+                MenuInfo subcategory = new MenuInfo(
+                        categoryObject.getString("_id"),
+                        categoryObject.getString("categoryId"),
+                        categoryObject.getString("name"));
+                list.add(subcategory);
+            }
+            return list;
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    List<FoodInfo> accessFood(String id) {
+        List<FoodInfo> list = null;
+        try {
+            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/food?id=" + id);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            String line = "";
+            String result = "";
+            BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            while ((line = bf.readLine()) != null) {
+                result = result.concat(line);
+            }
+
+            Log.d("Chk", result);
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray dataArray = (JSONArray) jsonObject.get("data");
+
+            list = new ArrayList<FoodInfo>();
+
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject foodObject = dataArray.getJSONObject(i);
+
+                List<String> sizeList = new ArrayList<String>();
+                List<String> priceList = new ArrayList<String>();
+                List<String> customIdList = new ArrayList<String>();
+
+                JSONArray sizeArray = (JSONArray) foodObject.get("size");
+                for (int j = 0; j < sizeArray.length(); j++) {
+                    sizeList.add(sizeArray.getString(j));
+                }
+
+                JSONArray priceArray = (JSONArray) foodObject.get("price");
+                for (int j = 0; j < priceArray.length(); j++) {
+                    priceList.add(priceArray.getString(j));
+                }
+
+                JSONArray customIdArray = (JSONArray) foodObject.get("customId");
+                for (int j = 0; j < customIdArray.length(); j++) {
+                    customIdList.add(customIdArray.getString(j));
+                }
+
+                FoodInfo food = new FoodInfo(
+                        foodObject.getString("_id"),
+                        foodObject.getString("name"),
+                        foodObject.getString("subcategoryId"),
+                        customIdList,
+                        foodObject.getBoolean("temp"),
+                        sizeList,
+                        priceList);
+
+                list.add(food);
+            }
+            return list;
+
+        } catch (
+                MalformedURLException e) {
+            e.printStackTrace();
+        } catch (
+                IOException e) {
+            e.printStackTrace();
+        } catch (
+                JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    CustomInfo accessCustom(String customId) {
+        URL customURL = null;
+        try {
+            customURL = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/custom?id=" + customId);
+            HttpURLConnection conn = (HttpURLConnection) customURL.openConnection();
+            conn.setRequestMethod("GET");
+
+            String customLine = "";
+            String customResult = "";
+            BufferedReader customBf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            while ((customLine = customBf.readLine()) != null) {
+                customResult = customResult.concat(customLine);
+            }
+
+            Log.d("Chk", customResult);
+            JSONObject jsonObject = new JSONObject(customResult);
+            JSONArray customDataArray = (JSONArray) jsonObject.get("data");
+            JSONObject customObject = (JSONObject) customDataArray.get(0);
+
+            List<String> typeList = new ArrayList<String>();
+            List<String> typePriceList = new ArrayList<String>();
+
+            JSONArray typeArray = (JSONArray) customObject.get("type");
+            for (int j = 0; j < typeArray.length(); j++) {
+                typeList.add(typeArray.getString(j));
+            }
+            Log.d("Chk",customObject.get("price")+"????????????????????");
+            if (customObject.get("price").toString().equals("null")) {
+                Log.d("Chk","null");
+                typePriceList = null;
+            }else{
+                JSONArray typePriceArray = (JSONArray) customObject.get("price");
+                for (int j = 0; j < typePriceArray.length(); j++) {
+                    typePriceList.add(typePriceArray.getString(j));
+                }
+            }
+            CustomInfo customInfo = new CustomInfo(customObject.getString("_id"),
+                    customObject.getString("name"),
+                    typeList,
+                    typePriceList);
+
+            return customInfo;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

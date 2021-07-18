@@ -30,6 +30,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
     Button btnSpeech;
     Button btnOK;
     TextView answer;
+    TextView stepView;
     Context context;
     String answerInfo;
     Number number = new Number();
@@ -41,12 +42,14 @@ public class Choose_Menu_1 extends AppCompatActivity {
     List<MenuInfo> subcategoryList;
     List<FoodInfo> foodList;
     CustomInfo customInfo;
-
+    CartList cartList = new CartList();
+    List<String> customCartList;
     int step;
     int set = 0;
     int customInfoOrder = 0;
-
+    int numberCnt;
     FoodInfo userFood;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
         btnSpeech = (Button) findViewById(R.id.btnSpeech);
         btnOK = (Button) findViewById(R.id.btnOK);
         answer = (TextView) findViewById(R.id.TextViewAnswer);
+        stepView = (TextView) findViewById(R.id.TextViewLocation);
         context = getApplicationContext();
         intent = getIntent();
         storeName = intent.getStringExtra("storeName");
@@ -66,6 +70,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
                 if (status == TextToSpeech.SUCCESS) {
                     textToSpeech.setLanguage(Locale.KOREAN);
                     step = Constants.CATEGORY_CHOOSE_STEPS;
+                    stepView.setText("카테고리 선택");
                     chooseCategory();
                 }
             }
@@ -124,7 +129,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
     }
 
     void chooseCategory() {
-
         if (categoryList == null) {
             setCategoryList();
 
@@ -139,6 +143,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
             if (i < categoryList.size()) {
                 MenuInfo category = categoryList.get(i);
                 textToSpeech.speak(i - set * 5 + 1 + "번 " + category.name, TextToSpeech.QUEUE_ADD, null);
+                numberCnt = i - set * 5 + 1;
             }
         }
 
@@ -155,6 +160,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
         set = 0;
         textToSpeech.speak(categoryInfo.name + "하위 메뉴 카테고리 선택으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
         step = Constants.SUBCATEGORY_CHOOSE_STEPS;
+        stepView.setText("하위 카테고리 선택");
         chooseSubcategory();
     }
 
@@ -184,7 +190,9 @@ public class Choose_Menu_1 extends AppCompatActivity {
     }
 
     void chooseSubcategory() {
-        setSubcategoryList();
+        if (subcategoryList == null) {
+            setSubcategoryList();
+        }
         if (set * 5 > subcategoryList.size()) {
             set = 0;
             textToSpeech.speak("모든 카테고리 정보를 다 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
@@ -194,6 +202,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
             if (i < subcategoryList.size()) {
                 MenuInfo category = subcategoryList.get(i);
                 textToSpeech.speak(i - set * 5 + 1 + "번 " + category.name, TextToSpeech.QUEUE_ADD, null);
+                numberCnt = i - set * 5 + 1;
             }
         }
 
@@ -210,6 +219,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
         set = 0;
         textToSpeech.speak(subcategoryInfo.name + "음식 선택으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
         step = Constants.FOOD_CHOOSE_STEPS;
+        stepView.setText("음식 선택");
         chooseFood();
     }
 
@@ -217,7 +227,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
         ExecutorService executorService = Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors()
         );
-
         Callable<List<FoodInfo>> task = new Callable<List<FoodInfo>>() {
             @Override
             public List<FoodInfo> call() {
@@ -252,12 +261,61 @@ public class Choose_Menu_1 extends AppCompatActivity {
         for (int i = set * 5; i < set * 5 + 5; i++) {
             if (i < foodList.size()) {
                 FoodInfo food = foodList.get(i);
-                textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name, TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + " " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
+                numberCnt = i - set * 5 + 1;
             }
         }
 
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
         getUserSpeak("화면 상단을 눌러 음식 번호를 말씀해주시고 원하는 음식이 없으면 0번을 말씀해주세요.");
+    }
+
+    void getFoodName() {
+        userFood = foodList.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1);
+        Log.d("FoodName", userFood.name);
+        textToSpeech.speak(userFood.name + "음식을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+        cartList.addName(userFood.name);    //장바구니에 음식 이름 저장
+        cartList.addPrice(Integer.parseInt(userFood.price));
+        cartList.addSize(userFood.size);
+        customCartList = new ArrayList<String>();
+        if (userFood.temp) {
+            step = Constants.TEMP_CHOOSE_STEPS;
+            stepView.setText("ice/hot 선택");
+            chooseTemp();
+        } else {
+            cartList.addTemp(null);
+            checkCustom();
+        }
+
+
+    }
+
+    void chooseTemp() {
+        numberCnt = 2;
+        getUserSpeak("음료 종류를 선택합니다. 1번 ice, 2번 hot 입니다. 화면을 눌러 원하는 번호를 말씀해주세요.");
+    }
+
+    void getTemp() {
+        if (answer.getText().toString().equals("1")) {
+            cartList.addTemp("ice");
+        } else if (answer.getText().toString().equals("2")) {
+            cartList.addTemp("hot");
+        }
+        checkCustom();
+    }
+
+    void checkCustom() {
+        if (userFood.customId == null) {
+            cartList.addCustom(null);   //커스텀 정보 없음
+            step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
+            stepView.setText("음식 수량 선택");
+            chooseFoodQuantity();
+        } else {
+            set = 0;
+            step = Constants.CUSTOM_CHOOSE_STEPS;
+            stepView.setText("옵션 선택");
+            chooseCustom();
+        }
     }
 
     void setCustomInfo(final String customId) {
@@ -285,34 +343,25 @@ public class Choose_Menu_1 extends AppCompatActivity {
         executorService.shutdown();
     }
 
-    void getFoodName() {
-        userFood = foodList.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1);
-        Log.d("FoodName", userFood.name);
-        textToSpeech.speak(userFood.name + "음식을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-
-        if (userFood.customId == null) {
+    void getCustomName() {
+        if (customInfoOrder == userFood.customId.size() - 1) {
+            textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+            cartList.addCustom((ArrayList<String>) customCartList);//커스텀 정보 담기
             step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
+            stepView.setText("음식 수량 선택");
             chooseFoodQuantity();
         } else {
+            textToSpeech.speak(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1) + " 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+            customCartList.add(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1));
+            int price = cartList.priceList.get(cartList.priceList.size() - 1);
+            cartList.priceList.remove(cartList.priceList.size() - 1);
+            if(customInfo.price!=null) {
+                cartList.priceList.add(price + Integer.valueOf(customInfo.price.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1)));
+            }
             set = 0;
-            step = Constants.CUSTOM_CHOOSE_STEPS;
-            chooseCustom();
-        }
+            customInfoOrder += 1;
 
-
-    }
-
-    void getCustomName(){
-        if (customInfoOrder == userFood.customId.size()-1) {
-            textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-            //커스텀 정보 끝
-            step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
-            chooseFoodQuantity();
-        }else{
-            textToSpeech.speak(customInfo.type.get(Integer.parseInt(answer.getText().toString())+set*5-1)+" 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-            set = 0;
             textToSpeech.speak("다음 커스텀으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
-            customInfoOrder+=1;
             chooseCustom();
         }
     }
@@ -324,10 +373,19 @@ public class Choose_Menu_1 extends AppCompatActivity {
             textToSpeech.speak("모든 정보를 다 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
         }
         textToSpeech.speak(customInfo.name + " 부분입니다.", TextToSpeech.QUEUE_ADD, null);
-
-        for (int i = set * 5; i < set * 5 + 5; i++) {
-            if (i < customInfo.type.size()) {
-                textToSpeech.speak(i - set * 5 + 1+ "번 " + customInfo.type.get(i), TextToSpeech.QUEUE_ADD, null);
+        if (customInfo.price != null) {
+            for (int i = set * 5; i < set * 5 + 5; i++) {
+                if (i < customInfo.type.size()) {
+                    textToSpeech.speak(i - set * 5 + 1 + "번 " + customInfo.type.get(i) + " " + customInfo.price.get(i) + "원", TextToSpeech.QUEUE_ADD, null);
+                    numberCnt = i - set * 5 + 1;
+                }
+            }
+        } else {
+            for (int i = set * 5; i < set * 5 + 5; i++) {
+                if (i < customInfo.type.size()) {
+                    textToSpeech.speak(i - set * 5 + 1 + "번 " + customInfo.type.get(i), TextToSpeech.QUEUE_ADD, null);
+                    numberCnt = i - set * 5 + 1;
+                }
             }
         }
 
@@ -337,12 +395,56 @@ public class Choose_Menu_1 extends AppCompatActivity {
     }
 
     void chooseFoodQuantity() {
+        numberCnt = 5;
         getUserSpeak("주문할 개수를 번호로 말씀해주세요. 1번은 1개 입니다.");
     }
 
-    void putInCart() {
+    void payOrAdd() {
         textToSpeech.speak("장바구니에 음식을 담았습니다.", TextToSpeech.QUEUE_ADD, null);
+        numberCnt = 3;
+        step = Constants.CASH_OR_ADD_STEPS;
+        stepView.setText("결제/추가주문 선택");
         getUserSpeak("결제를 원하시면 1번, 하위 카테고리에서 주문을 원하시면 2번, 상위 카테고리에서 주문을 원하시면 3번을 눌러주세요.");
+
+
+    }
+
+    void getPayOrAddInfo() {
+        switch (Integer.parseInt(answer.getText().toString())) {
+            case 1:
+                pay();
+                break;
+            case 2:
+                foodList = null;
+                customCartList = null;
+                userFood = null;
+                customInfo = null;
+                set = 0;
+                customInfoOrder = 0;
+                step = Constants.FOOD_CHOOSE_STEPS;
+                stepView.setText("음식 선택");
+                chooseFood();
+                break;
+            case 3:
+                subcategoryList = null;
+                foodList = null;
+                customCartList = null;
+                userFood = null;
+                customInfo = null;
+                set = 0;
+                customInfoOrder = 0;
+                step = Constants.SUBCATEGORY_CHOOSE_STEPS;
+                stepView.setText("하위 카테고리 선택");
+                chooseSubcategory();
+                break;
+        }
+    }
+
+    void pay() {
+        Log.d("Chk", cartList.menuList().toString() + "!!!!!!!!!!!!!!");
+        Intent cartIntent = new Intent(context, LastOrder.class);
+        cartIntent.putExtra("menuList", cartList.menuList());
+        startActivity(cartIntent);
     }
 
     void getUserSpeak(String guideText) {
@@ -434,7 +536,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
                 answer.setText(matches.get(i));
             }
 
-            answerInfo = number.findNumber(answer.getText().toString());
+            answerInfo = number.findNumberByCnt(answer.getText().toString(), numberCnt);
             Toast.makeText(context, "사용자 답변 확인.", Toast.LENGTH_SHORT).show();
             if (answerInfo == null) {
                 textToSpeech.speak("번호를 인식하지 못하였습니다. 화면 상단을 눌러 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
@@ -461,15 +563,13 @@ public class Choose_Menu_1 extends AppCompatActivity {
                                     set += 1;
                                     chooseFood();
                                     break;
-
                                 case Constants.CUSTOM_CHOOSE_STEPS:
                                     textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
                                     set += 1;
                                     chooseCustom();
-
-                                case Constants.FOOD_QUANTITY_CHOOSE_STEPS:
-                                    textToSpeech.speak("주문을 취소하고 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
-                                    chooseCategory();
+                                    break;
+                                default:
+                                    textToSpeech.speak("올바른 번호를 인식하지 못하였습니다. 화면 상단을 눌러 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
                                     break;
                             }
 
@@ -488,8 +588,15 @@ public class Choose_Menu_1 extends AppCompatActivity {
                                 case Constants.CUSTOM_CHOOSE_STEPS:
                                     getCustomName();
                                     break;
+                                case Constants.TEMP_CHOOSE_STEPS:
+                                    getTemp();
+                                    break;
                                 case Constants.FOOD_QUANTITY_CHOOSE_STEPS:
-                                    putInCart();
+                                    cartList.addQuantity(Integer.parseInt(answer.getText().toString()));    //장바구니에 수량 저장
+                                    payOrAdd();
+                                    break;
+                                case Constants.CASH_OR_ADD_STEPS:
+                                    getPayOrAddInfo();
                                     break;
                             }
 

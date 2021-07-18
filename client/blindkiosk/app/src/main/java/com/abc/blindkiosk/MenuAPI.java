@@ -171,35 +171,28 @@ public class MenuAPI {
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject foodObject = dataArray.getJSONObject(i);
 
-                List<String> sizeList = new ArrayList<String>();
-                List<String> priceList = new ArrayList<String>();
                 List<String> customIdList = new ArrayList<String>();
-
-                JSONArray sizeArray = (JSONArray) foodObject.get("size");
-                for (int j = 0; j < sizeArray.length(); j++) {
-                    sizeList.add(sizeArray.getString(j));
-                }
-
-                JSONArray priceArray = (JSONArray) foodObject.get("price");
-                for (int j = 0; j < priceArray.length(); j++) {
-                    priceList.add(priceArray.getString(j));
-                }
 
                 JSONArray customIdArray = (JSONArray) foodObject.get("customId");
                 for (int j = 0; j < customIdArray.length(); j++) {
                     customIdList.add(customIdArray.getString(j));
                 }
 
-                FoodInfo food = new FoodInfo(
-                        foodObject.getString("_id"),
-                        foodObject.getString("name"),
-                        foodObject.getString("subcategoryId"),
-                        customIdList,
-                        foodObject.getBoolean("temp"),
-                        sizeList,
-                        priceList);
+                JSONArray sizeArray = (JSONArray) foodObject.get("size");
+                JSONArray priceArray = (JSONArray) foodObject.get("price");
+                for (int j = 0; j < sizeArray.length(); j++) {
+                    FoodInfo food = new FoodInfo(
+                            foodObject.getString("_id"),
+                            foodObject.getString("name"),
+                            foodObject.getString("subcategoryId"),
+                            customIdList,
+                            foodObject.getBoolean("temp"),
+                            sizeArray.getString(j),
+                            priceArray.getString(j));
 
-                list.add(food);
+                    list.add(food);
+                }
+
             }
             return list;
 

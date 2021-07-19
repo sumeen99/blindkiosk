@@ -14,13 +14,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        intent = new Intent(this, StoreActivity.class);
-        //intent = new Intent(this, Choose_Menu.class);
+        //intent = new Intent(this, StoreActivity.class);
+        intent = new Intent(this, Choose_Menu_2.class);
         Button btnStore = (Button) findViewById(R.id.btnStore);
         btnStore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 startActivity(intent);
             }
         });

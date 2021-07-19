@@ -23,6 +23,7 @@ public class Number {
         one.add("1");
         one.add("첫");
         one.add("일");
+        one.add("한");
         numberMap.put("1",one);
 
         two.add("2");

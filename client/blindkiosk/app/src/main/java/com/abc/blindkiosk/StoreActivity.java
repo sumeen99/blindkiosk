@@ -45,7 +45,6 @@ public class StoreActivity extends AppCompatActivity {
     double longitude;
     double latitude;
     LocationManager locationManager;
-    //STT stt;
     Intent intent;
     Context context;
     SpeechRecognizer mRecognizer;
@@ -263,7 +262,8 @@ public class StoreActivity extends AppCompatActivity {
             @Override
             public List<String> call() {
                 StoreAPI storeAPI = new StoreAPI();
-                return storeAPI.access(127.07307033455444 + "", 37.547275328253214 + "");
+                //return storeAPI.access(127.07307033455444 + "", 37.547275328253214 + "");
+                return storeAPI.access(127.07373482196793+"", 37.547173391279266+"");
 
             }
         };
@@ -288,6 +288,7 @@ public class StoreActivity extends AppCompatActivity {
         }
         if(set*5>stores.size()){
             set = 0;
+            textToSpeech.speak("모든 가게 정보를 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
         }
         textToSpeech.speak("주변 가게 목록은", TextToSpeech.QUEUE_ADD, null);
         for (int i = set * 5; i < set * 5 + 5; i++) {
@@ -306,7 +307,7 @@ public class StoreActivity extends AppCompatActivity {
         Log.d("StoreName", storeName);
         textToSpeech.speak(storeName + "을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
         Intent storeNameIntent = new Intent(this,Choose_Menu.class);
-        storeNameIntent.putExtra("storeName",storeName);
+        storeNameIntent.putExtra("storeName","공차");
         startActivity(storeNameIntent);
     }
 }

@@ -42,13 +42,21 @@ public class Choose_Menu_1 extends AppCompatActivity {
     List<MenuInfo> subcategoryList;
     List<FoodInfo> foodList;
     CustomInfo customInfo;
-    CartList cartList = new CartList();
+
     List<String> customCartList;
     int step;
     int set = 0;
     int customInfoOrder = 0;
     int numberCnt;
     FoodInfo userFood;
+
+    ArrayList<CartList> cartList;
+    String name;
+    String size;
+    String temp;
+    ArrayList<String> customList;
+    Integer price;
+    Integer quantity;
 
 
     @Override
@@ -274,16 +282,16 @@ public class Choose_Menu_1 extends AppCompatActivity {
         userFood = foodList.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1);
         Log.d("FoodName", userFood.name);
         textToSpeech.speak(userFood.name + "음식을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-        cartList.addName(userFood.name);    //장바구니에 음식 이름 저장
-        cartList.addPrice(Integer.parseInt(userFood.price));
-        cartList.addSize(userFood.size);
+        name = (userFood.name);    //장바구니에 음식 이름 저장
+        price = (Integer.parseInt(userFood.price));
+        size = (userFood.size);
         customCartList = new ArrayList<String>();
         if (userFood.temp) {
             step = Constants.TEMP_CHOOSE_STEPS;
             stepView.setText("ice/hot 선택");
             chooseTemp();
         } else {
-            cartList.addTemp(null);
+            temp = (null);
             checkCustom();
         }
 
@@ -297,16 +305,16 @@ public class Choose_Menu_1 extends AppCompatActivity {
 
     void getTemp() {
         if (answer.getText().toString().equals("1")) {
-            cartList.addTemp("ice");
+            temp = ("ice");
         } else if (answer.getText().toString().equals("2")) {
-            cartList.addTemp("hot");
+            temp = ("hot");
         }
         checkCustom();
     }
 
     void checkCustom() {
         if (userFood.customId == null) {
-            cartList.addCustom(null);   //커스텀 정보 없음
+            customList = (null);   //커스텀 정보 없음
             step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
             stepView.setText("음식 수량 선택");
             chooseFoodQuantity();
@@ -346,17 +354,16 @@ public class Choose_Menu_1 extends AppCompatActivity {
     void getCustomName() {
         if (customInfoOrder == userFood.customId.size() - 1) {
             textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-            cartList.addCustom((ArrayList<String>) customCartList);//커스텀 정보 담기
+            customList = ((ArrayList<String>) customCartList);//커스텀 정보 담기
             step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
             stepView.setText("음식 수량 선택");
             chooseFoodQuantity();
         } else {
             textToSpeech.speak(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1) + " 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
             customCartList.add(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1));
-            int price = cartList.priceList.get(cartList.priceList.size() - 1);
-            cartList.priceList.remove(cartList.priceList.size() - 1);
-            if(customInfo.price!=null) {
-                cartList.priceList.add(price + Integer.valueOf(customInfo.price.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1)));
+
+            if (customInfo.price != null) {
+                price += Integer.valueOf(customInfo.price.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1));
             }
             set = 0;
             customInfoOrder += 1;
@@ -441,9 +448,11 @@ public class Choose_Menu_1 extends AppCompatActivity {
     }
 
     void pay() {
-        Log.d("Chk", cartList.menuList().toString() + "!!!!!!!!!!!!!!");
+        CartList cart = new CartList(name, size, temp, customList, price, quantity);
+        cartList.add(cart);
+
         Intent cartIntent = new Intent(context, LastOrder.class);
-        cartIntent.putExtra("menuList", cartList.menuList());
+        cartIntent.putExtra("menuList", cartList);
         startActivity(cartIntent);
     }
 
@@ -592,7 +601,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
                                     getTemp();
                                     break;
                                 case Constants.FOOD_QUANTITY_CHOOSE_STEPS:
-                                    cartList.addQuantity(Integer.parseInt(answer.getText().toString()));    //장바구니에 수량 저장
+                                    quantity = (Integer.parseInt(answer.getText().toString()));    //장바구니에 수량 저장
                                     payOrAdd();
                                     break;
                                 case Constants.CASH_OR_ADD_STEPS:

@@ -199,8 +199,9 @@ public class Choose_Menu extends AppCompatActivity {
             startActivity(intent1);
 
         } else if (numberinfo == "2") {
-            //Intent intent = new Intent(this, Choose_Menu_2.class);
-            //startActivity(intent);
+            Intent intent2 = new Intent(this, Choose_Menu_2.class);
+            intent2.putExtra("storeName",storeName);
+            startActivity(intent2);
         } else if (numberinfo == "3") {
             //Intent intent = new Intent(this, Choose_Menu_3.class);
             //startActivity(intent);

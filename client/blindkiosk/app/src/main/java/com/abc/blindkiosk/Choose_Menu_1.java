@@ -269,7 +269,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
         for (int i = set * 5; i < set * 5 + 5; i++) {
             if (i < foodList.size()) {
                 FoodInfo food = foodList.get(i);
-                textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + " " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + " 사이즈 " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
                 numberCnt = i - set * 5 + 1;
             }
         }

@@ -10,6 +10,8 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -63,9 +65,10 @@ public class Choose_Menu_2 extends AppCompatActivity {
     String material;
     String customId;
     JSONObject foodInfo; //카트에 넣을 메뉴 정보를 담는 json - (+icedType)
-    ArrayList<CartList> cartList;
-    ArrayList<String> moveCategory = new ArrayList<>(Arrays.asList("category", "subcategory", "food"));
-    ArrayList<String> moveCategory_kor = new ArrayList<>(Arrays.asList("상위 카테고리", "하위 카테고리", "메뉴명"));
+
+    ArrayList<CartList> cartList = new ArrayList<>();
+    ArrayList<String> moveCategory_kor = new ArrayList<>(Arrays.asList("상위", "하위", "메뉴명"));
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,11 +76,13 @@ public class Choose_Menu_2 extends AppCompatActivity {
         setContentView(R.layout.choose_menu_2);
 
         textView = findViewById(R.id.textView);
+
         button_speak = findViewById(R.id.button_speak);
-        button_ok = findViewById(R.id.button_ok);
+
+        button_ok = findViewById(R.id.button_payment);
         storeIntent = getIntent();
-        //storeName = storeIntent.getStringExtra("storeName");
-        storeName = "공차";
+        storeName = storeIntent.getStringExtra("storeName");
+        //storeName = "공차";
         context = getApplicationContext();
 
         if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -118,12 +123,12 @@ public class Choose_Menu_2 extends AppCompatActivity {
             num = set * 5;
         }
         for (int i = 0; i < 5; i++){
-            if(num + i > arrayId.size()){
+            if(num + i >= arrayId.size()){
                 break;
             }
             try {
                 listId = new JSONObject(arrayId.get(num + i));
-                textToSpeech.speak((i + 1) + "번 카테고리" + listId.getString("name"), TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak((i + 1) + " 번 " + listId.getString("name"), TextToSpeech.QUEUE_ADD, null);
                 jsonArray.put(listId);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -131,7 +136,8 @@ public class Choose_Menu_2 extends AppCompatActivity {
         }
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
         CategoryArray = jsonArray;
-        getUserSpeak("화면 상단을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
+
+        getUserSpeak("상단 버튼을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
 
     }
 
@@ -150,12 +156,12 @@ public class Choose_Menu_2 extends AppCompatActivity {
             num = set * 5;
         }
         for (int i = 0; i < 5; i++){
-            if(num + i > arrayId.size()){
+            if(num + i >= arrayId.size()){
                 break;
             }
             try {
                 listId = new JSONObject(arrayId.get(num + i));
-                textToSpeech.speak((i + 1) + "번 카테고리" + listId.getString("name"), TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak((i + 1) + " 번 " + listId.getString("name"), TextToSpeech.QUEUE_ADD, null);
                 jsonArray.put(listId);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -163,7 +169,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
         }
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
         CategoryArray = jsonArray;
-        getUserSpeak("화면 상단을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
+        getUserSpeak("상단 버튼을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
 
     }
 
@@ -172,7 +178,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
         arrayId = getListId(subcategoryId, type);
 
-        getUserSpeak("상단 버튼을 누르고 원하는 재료가 있으면 1번을 제외시키고 싶은 재료가 있으면 2번을 말해주세요.");
+        getUserSpeak("상단 버튼을 누르고 원하는 재료가 있으면 1번, 제외시키고 싶은 재료가 있으면 2번을 말해주세요.");
     }
 
     void getUserSpeak(String guideText) {
@@ -195,11 +201,10 @@ public class Choose_Menu_2 extends AppCompatActivity {
         Callable<String> task = new Callable<String>() {
             @Override
             public String call() {
-                switch (type) {
-                    case "store":
-                        return MenuAPI.storeName(storeName);
-                    default:
-                        return MenuAPI.custom(customId);
+                if (type.equals("store")) {
+                    return MenuAPI.storeName(storeName);
+                } else{
+                    return MenuAPI.custom(customId);
                 }
             }
         };
@@ -324,196 +329,235 @@ public class Choose_Menu_2 extends AppCompatActivity {
                 textView.setText(matches.get(i));
             }
 
-            numberinfo = number.findNumber(textView.getText().toString());
-
-
-            if(numberinfo.equals("0")){ //리스트 5개 다시 불러주는 경우
-                set += 1;
-                switch (type) {
-                    case "category":
-                        Category();
-                        break;
-                    case "subcategory":
-                        SubCategory();
-                        break;
-                    case "food_name":
-                        type = beforeType;
-                        goMenu();
-                        break;
-                    case "topping":
-                        chooseTopping();
-                        break;
-                    case "finalMenu":
-                        goLastOrder();
-                }
-            } else{ //사용자 말한게 0이 아닌 다른경우
-                if(!type.equals("food_plus") && !type.equals("food_exp")){ //food_plus, food_exp 을 제외하면 숫자로 음성인식받음
-                    String name = null;
-                    if (type.equals("food")){
-                        if(numberinfo.equals("1")){ //재료 포함하는 경우
-                            type = "food_plus"; //타입 변경
-                            getUserSpeak("상단버튼을 누르고 원하는 재료를 말해 주세요.");
-                        } else if(numberinfo.equals("2")){ //재료 제외하는 경우
-                            type = "food_exp";
-                            getUserSpeak("상단버튼을 누르고 제외시키고 싶은 재료를 말해 주세요.");
+            if(!type.equals("food_plus") && !type.equals("food_exp")) {
+                numberinfo = number.findNumber(textView.getText().toString());
+                if (numberinfo != null) {
+                    if (numberinfo.equals("0")) { //리스트 5개 다시 불러주는 경우
+                        set += 1;
+                        switch (type) {
+                            case "category":
+                                Category();
+                                break;
+                            case "subcategory":
+                                SubCategory();
+                                break;
+                            case "food_name":
+                                type = beforeType;
+                                goMenu();
+                                break;
+                            case "topping":
+                                chooseTopping();
+                                break;
+                            case "finalMenu":
+                                goLastOrder();
                         }
-                    } else {
-                        if(type.equals("category") || type.equals("subcategory")){ //카테고리 선택
-                            try {
-                                JSONObject jsonName = CategoryArray.getJSONObject(Integer.parseInt(numberinfo));
-                                name = jsonName.getString("name");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            textToSpeech.speak("선택하신 카테고리가 " + name + "이 맞으면 하단버튼을 아니면 상단버튼을 누르고 다시 번호를 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                        } else if(type.equals("food_name")){
-                            try {
-                                foodInfo = MenuArray.getJSONObject(Integer.parseInt(numberinfo));
-                                name = foodInfo.getString("name");
-                                textToSpeech.speak("선택하신 메뉴가 " + name + "이 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else if(type.equals("topping")){
-                            try {
-                                JSONObject object = new JSONObject(customArray);
-                                List<String> toppingType = (List<String>) object.get("type");
-                                List<String> toppingPrice = (List<String>) object.get("price");
-                                foodInfo.put("toppingType", toppingType.get(set * 5 + Integer.parseInt(numberinfo)));
-                                foodInfo.put("toppingPrice", Integer.parseInt(toppingPrice.get(set * 5 + Integer.parseInt(numberinfo))));
-                                textToSpeech.speak("선택하신 토핑이" + toppingType.get(set * 5 + Integer.parseInt(numberinfo)) + "이 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else if(type.equals("temp")){
-                            if(numberinfo.equals("1")){
+                    } else { //사용자 말한게 0이 아닌 다른경우
+                        String name = null;
+                        switch (type) {
+                            case "food":
+                                if (numberinfo.equals("1")) { //재료 포함하는 경우
+                                    type = "food_plus"; //타입 변경
+                                    getUserSpeak("상단버튼을 누르고 원하는 재료를 말해 주세요.");
+                                } else if (numberinfo.equals("2")) { //재료 제외하는 경우
+                                    type = "food_exp";
+                                    getUserSpeak("상단버튼을 누르고 제외시키고 싶은 재료를 말해 주세요.");
+                                }
+                                break;
+                            case "category":
+                            case "subcategory":  //카테고리 선택
                                 try {
-                                    foodInfo.put("temp", "iced");
-                                    textToSpeech.speak("아이스를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    JSONObject jsonName = CategoryArray.getJSONObject(Integer.parseInt(numberinfo) - 1);
+                                    name = jsonName.getString("name");
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                            } else if(numberinfo.equals("2")){
+                                textToSpeech.speak(name + " 카테고리를 선택한 것이 맞으면 하단버튼을 아니면 상단버튼을 누르고 다시 번호를 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                break;
+                            case "food_name":
                                 try {
-                                    foodInfo.put("temp", "hot");
-                                    textToSpeech.speak("핫을 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    foodInfo = MenuArray.getJSONObject(Integer.parseInt(numberinfo) - 1);
+                                    name = foodInfo.getString("name");
+                                    textToSpeech.speak(name + " 메뉴를 선택한 것이 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "topping":
+                                try {
+                                    JSONObject object = new JSONObject(customArray);
+                                    JSONArray jsonArray = object.getJSONArray("type");
+                                    ArrayList<String> toppingType = new ArrayList<>();
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        toppingType.add(jsonArray.getString(i));
+                                    }
+                                    jsonArray = object.getJSONArray("price");
+                                    ArrayList<String> toppingPrice = new ArrayList<>();
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        toppingPrice.add(jsonArray.getString(i));
+                                    }
+
+                                    foodInfo.put("toppingType", toppingType.get(set * 5 + Integer.parseInt(numberinfo) - 1));
+                                    foodInfo.put("toppingPrice", Integer.parseInt(toppingPrice.get(set * 5 + Integer.parseInt(numberinfo) - 1)));
+                                    textToSpeech.speak(toppingType.get(set * 5 + Integer.parseInt(numberinfo) - 1) + " 토핑을 선택한 것이 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "temp":
+                                if (numberinfo.equals("1")) {
+                                    try {
+                                        foodInfo.put("temp", "iced");
+                                        textToSpeech.speak("아이스를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else if (numberinfo.equals("2")) {
+                                    try {
+                                        foodInfo.put("temp", "hot");
+                                        textToSpeech.speak("핫을 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    textToSpeech.speak("잘못된 대답입니다. 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                }
+                                break;
+                            case "iceAmount":
+                                try {
+                                    JSONObject object = new JSONObject(customArray);
+                                    JSONArray jsonArray = object.getJSONArray("type");
+                                    ArrayList<String> iceList = new ArrayList<>();
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        iceList.add(jsonArray.getString(i));
+                                    }
+                                    String iceType = iceList.get(Integer.parseInt(numberinfo) - 1);
+                                    foodInfo.put("icedType", iceType);
+                                    textToSpeech.speak("선택하신 얼음량은 " + iceType + " 입니다.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "sweet":
+                                try {
+                                    JSONObject object = new JSONObject(customArray);
+                                    JSONArray jsonArray = object.getJSONArray("type");
+                                    ArrayList<String> sweetList = new ArrayList<>();
+                                    for (int i = 0; i < jsonArray.length(); i++) {
+                                        sweetList.add(jsonArray.getString(i));
+                                    }
+                                    String sweetType = sweetList.get(Integer.parseInt(numberinfo) - 1);
+                                    foodInfo.put("sweetType", sweetType);
+                                    textToSpeech.speak("선택하신 당도는 " + sweetType + " 입니다.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "quantity":
+                                try {
+                                    foodInfo.put("quantity", Integer.parseInt(numberinfo));
+                                    textToSpeech.speak(numberinfo + " 개 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            case "finalMenu":
+                                textToSpeech.speak(moveCategory_kor.get(Integer.parseInt(numberinfo) - 1) + " 카테고리를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                break;
+                        }
+                    }
+                } else {
+                    textToSpeech.speak("잘못된 답변입니다. 상단 버튼을 누르고 다시 말씀해 주세요.", TextToSpeech.QUEUE_ADD, null);
+                }
+            } else if(type.equals("food_plus")){ //food_plus food_exp는 string값을 받음
+                material = textView.getText().toString();
+                textToSpeech.speak(material + " 재료를 원하는 것이 맞으면 하단 버튼을 누르고 아니면 상단버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+            } else if(type.equals("food_exp")){
+                material = textView.getText().toString();
+                textToSpeech.speak(material + " 재료를 제외시키고 싶은 것이 맞으면 하단 버튼을 누르고 아니면 상단버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+            }
+
+            button_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    set = 0;
+                    switch (type) {
+                        case "category":
+                        case "subcategory":
+                            goCategory();
+                            break;
+                        case "food_plus":
+                        case "food_exp":
+                            goMenu();
+                            break;
+                        case "food_name":
+                            try {
+                                if (foodInfo.getString("customId").equals("null")) {
+                                    goQuantity();
+                                } else {
+                                    chooseTopping();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "topping":
+                            try {
+                                if(foodInfo.getString("temp").equals("true")){
+                                    chooseTemp();
+                                } else{
+                                    foodInfo.put("temp", null);
+                                    foodInfo.put("icedType", null);
+                                    if(foodInfo.getJSONArray("customId").length() > 1){
+                                        chooseSweet(1);
+                                    }
+                                    else{
+                                        foodInfo.put("sweetType", null);
+                                        goQuantity();
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case "temp":
+                            if(numberinfo.equals("1")){
+                                try {
+                                    foodInfo.put("temp", "iced");
+                                    customIce();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                             } else{
-                                textToSpeech.speak("잘못된 대답입니다. 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                chooseSweet(2);
                             }
-                        } else if(type.equals("iceAmount")){
-                            try {
-                                JSONObject object = new JSONObject(customArray);
-                                List<String> iceList = (List<String>)object.get("type");
-                                String iceType = iceList.get(Integer.parseInt(numberinfo));
-                                foodInfo.put("icedType", iceType);
-                                textToSpeech.speak("선택하신 얼음량은 " + iceType+ "입니다.",TextToSpeech.QUEUE_ADD,null);
-                                textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.",TextToSpeech.QUEUE_ADD,null);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            break;
+                        case "iceAmount":
+                            chooseSweet(2);
+                            break;
+                        case "sweet":
+                            goQuantity();
+                            break;
+                        case "quantity":
+                            addMenu();
+                            break;
+                        case "finalMenu":
+                            if(Integer.parseInt(numberinfo) == 1){
+                                type = "category";
+                                Category();
+                            } else if(Integer.parseInt(numberinfo) == 2){
+                                type = "subcategory";
+                                SubCategory();
+                            } else if(Integer.parseInt(numberinfo) == 3){
+                                type = "food";
+                                Food();
                             }
-                        } else if(type.equals("sweet")){
-                            try {
-                                JSONObject object = new JSONObject(customArray);
-                                List<String> sweetList = (List<String>)object.get("type");
-                                String sweetType = sweetList.get(Integer.parseInt(numberinfo));
-                                foodInfo.put("sweetType", sweetType);
-                                textToSpeech.speak("선택하신 당도는 " + sweetType+ "입니다.",TextToSpeech.QUEUE_ADD,null);
-                                textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.",TextToSpeech.QUEUE_ADD,null);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else if(type.equals("quantity")){
-                            try {
-                                foodInfo.put("quantity", Integer.parseInt(numberinfo));
-                                textToSpeech.speak(numberinfo + "개 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else if(type.equals("finalMenu")){
-                            textToSpeech.speak(moveCategory_kor.get(Integer.parseInt(numberinfo) - 1)+"을 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                        }
+                            break;
 
                     }
-
-                } else if(type.equals("food_plus")){ //food_plus food_exp는 string값을 받음
-                    material = textView.getText().toString();
-                    textToSpeech.speak("원하는 재료가" + material + "이 맞으면 하단 버튼을 누르고 아니면 상단버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
-                } else if(type.equals("food_exp")){
-                    material = textView.getText().toString();
-                    textToSpeech.speak("제외시키고 싶은 재료가" + material + "이 맞으면 하단 버튼을 누르고 아니면 상단버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                 }
-
-                button_ok.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        set = 0;
-                        switch (type) {
-                            case "category":
-                            case "subcategory":
-                                goCategory();
-                                break;
-                            case "food_plus":
-                            case "food_exp":
-                                goMenu();
-                                break;
-                            case "food_name":
-                                try {
-                                    if (foodInfo.get("customId") == null) {
-                                        goQuantity();
-                                    } else {
-                                        goCustom(0);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            case "topping":
-                                try {
-                                    List<String> customList = (List<String>) foodInfo.get("customId");
-                                    if(customList.size() > 1){
-                                        goCustom(1);
-                                    } else{
-                                        foodInfo.put("temp", null);
-                                        foodInfo.put("icedType", null);
-                                        foodInfo.put("sweetType", null);
-                                        goQuantity();
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            case "temp":
-                                if(numberinfo.equals("1")){
-                                    try {
-                                        foodInfo.put("temp", "iced");
-                                        customIce();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else{
-                                    goCustom(2);
-                                }
-                            case "iceAmount":
-                                goCustom(2);
-                            case "sweet":
-                                goQuantity();
-                            case "quantity":
-                                addMenu();
-                            case "finalMenu":
-                                type = moveCategory.get(Integer.parseInt(numberinfo) - 1);
-                                if(Integer.parseInt(numberinfo) == 1){
-                                    Category();
-                                } else if(Integer.parseInt(numberinfo) == 2){
-                                    SubCategory();
-                                } else if(Integer.parseInt(numberinfo) == 3){
-                                    Food();
-                                }
-                        }
-                    }
-                });
-            }
-
+            });
         }
 
         @Override
@@ -528,7 +572,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
     };
 
     void goCategory() {
-        int num = Integer.parseInt(numberinfo);
+        int num = Integer.parseInt(numberinfo) - 1;
 
         if(type.equals("category")){
             try {
@@ -554,37 +598,49 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     void goMenu(){
 
-        List<String> materials;
         JSONArray jsonArray = new JSONArray();
         JSONObject jsonObject;
         int num = set * 5;
-        int i = 0; //반복문에서 사용
-        int cnt = 0; //5개 카운트할 때 사용
-
         if (num > arrayId.size()){
             set = 0;
             num = set * 5;
         }
+
+        int i = 0; //반복문에서 사용
+        int cnt = 0; //5개 카운트할 때 사용
+
         if(type.equals("food_plus")){
             beforeType = type;
-            textToSpeech.speak(material + "이 들어간 메뉴는 다음과 같습니다.", TextToSpeech.QUEUE_ADD, null);
-            while(true){
-                if(num + i > arrayId.size() || cnt > 5){ //메뉴 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
+            textToSpeech.speak(material + "재료가 들어간 메뉴는 다음과 같습니다.", TextToSpeech.QUEUE_ADD, null);
+            while(cnt < 5){
+                if(num + i >= arrayId.size()){ //메뉴 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
                     break;
                 }
                 try {
+                    List<String> materials = new ArrayList<>();
                     jsonObject = new JSONObject(arrayId.get(num + i)); //jsonarray에서  num+i번째 메뉴 jsonobject로 추출
-                    materials = (List<String>) jsonObject.get("material"); //추출한 jsonobject에서 material정보 list로 추출
+                    JSONArray jsonArray1 = jsonObject.getJSONArray("material");
+                    for(int k = 0; k < jsonArray1.length(); k++){ //추출한 jsonobject에서 material정보 list로 추출
+                        materials.add(jsonArray1.getString(k));
+                    }
                     if(materials.contains(material)) { //재료를 포함하고 있는 경우
-                        List<String> prices = (List<String>) jsonObject.get("price");
-                        if(jsonObject.get("size")==null){ //size가 따로 없으면 가격 바로 말하기
-                            textToSpeech.speak((cnt + 1) + "번" + jsonObject.getString("name") + prices.get(0) + "원", TextToSpeech.QUEUE_ADD, null);
+                        ArrayList<String> prices= new ArrayList<>();
+                        jsonArray1 = jsonObject.getJSONArray("price");
+                        for(int k = 0; k < jsonArray1.length(); k++){
+                            prices.add(jsonArray1.getString(k));
+                        }
+                        if(jsonObject.get("size")=="null"){ //size가 따로 없으면 가격 바로 말하기
+                            textToSpeech.speak((cnt + 1) + " 번 " + jsonObject.getString("name") + " " + prices.get(0) + " 원", TextToSpeech.QUEUE_ADD, null);
                             jsonArray.put(jsonObject); //jsonarray에 재료가 포함된 메뉴 put
                             cnt += 1;
-                        } else{ //size가 있으면 2개로 나눠서 말하기
-                            List<String> sizes= (List<String>) jsonObject.get("size");
+                        } else{ //size가 있으면 size개수별로 나눠서 말하기
+                            ArrayList<String> sizes= new ArrayList<>();
+                            jsonArray1 = jsonObject.getJSONArray("size");
+                            for(int k = 0; k < jsonArray1.length(); k++){
+                                sizes.add(jsonArray1.getString(k));
+                            }
                             for (int j = 0; j < sizes.size(); j++){ //사이즈 별로 jsonObject를 jsonArray에 추가
-                                textToSpeech.speak((cnt + 1 + j) + "번" + jsonObject.getString("name") + sizes.get(j) + "사이즈" + prices.get(j) + "원", TextToSpeech.QUEUE_ADD, null);
+                                textToSpeech.speak((cnt + 1 + j) + " 번 " + jsonObject.getString("name") + " " + sizes.get(j) + " 사이즈 " + prices.get(j) + " 원", TextToSpeech.QUEUE_ADD, null);
                                 JSONObject jsonObject1 = new JSONObject(arrayId.get(num + i));
                                 jsonObject1.put("size", sizes.get(j));
                                 jsonObject1.put("price", prices.get(j));
@@ -600,35 +656,47 @@ public class Choose_Menu_2 extends AppCompatActivity {
             }
             MenuArray = jsonArray;
             type = "food_name";
-            getUserSpeak("상단 버튼을 누르고 원하는 메뉴의 번호를 말해주세요. 원하는 메뉴가 없으면 0번을 말해주세요.");
+            getUserSpeak("상단 버튼을 누르고 원하는 메뉴의 번호를 말해주시고 원하는 메뉴가 없으면 0번을 말해주세요.");
 
         } else if(type.equals("food_exp")){
             beforeType = type;
-            textToSpeech.speak(material + "이 포함되지 않은 메뉴는 다음과 같습니다.", TextToSpeech.QUEUE_ADD, null);
-            while(true){
-                if(num + i > arrayId.size() || cnt > 5){ //메뉴 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
+            textToSpeech.speak(material + "재료가 포함되지 않은 메뉴는 다음과 같습니다.", TextToSpeech.QUEUE_ADD, null);
+            while(cnt < 5){
+                if(num + i >= arrayId.size()){ //메뉴 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
                     break;
                 }
                 try {
+                    List<String> materials = new ArrayList<>();
                     jsonObject = new JSONObject(arrayId.get(num + i)); //jsonarray에서  num+i번째 메뉴 jsonobject로 추출
-                    materials = (List<String>) jsonObject.get("material"); //추출한 jsonobject에서 material정보 list로 추출
-                    if(!materials.contains(material)) { //재료를 포함하고 있는 경우
-                        List<String> prices = (List<String>) jsonObject.get("price");
-                        if(jsonObject.get("size")==null){ //size가 따로 없으면 가격 바로 말하기
-                            textToSpeech.speak((cnt + 1) + "번" + jsonObject.getString("name") + prices.get(0) + "원", TextToSpeech.QUEUE_ADD, null);
+                    JSONArray jsonArray1 = jsonObject.getJSONArray("material");
+                    for(int k = 0; k < jsonArray1.length(); k++){ //추출한 jsonobject에서 material정보 list로 추출
+                        materials.add(jsonArray1.getString(k));
+                    }
+                    if(!materials.contains(material)) { //재료를 포함하지 않는 경우
+                        ArrayList<String> prices= new ArrayList<>();
+                        jsonArray1 = jsonObject.getJSONArray("price");
+                        for(int k = 0; k < jsonArray1.length(); k++){
+                            prices.add(jsonArray1.getString(k));
+                        }
+                        if(jsonObject.get("size")=="null"){ //size가 따로 없으면 가격 바로 말하기
+                            textToSpeech.speak((cnt + 1) + " 번 " + jsonObject.getString("name") + " " + prices.get(0) + "원", TextToSpeech.QUEUE_ADD, null);
                             jsonArray.put(jsonObject); //jsonarray에 재료가 포함된 메뉴 put
+                            cnt += 1;
                         } else{ //size가 있으면 2개로 나눠서 말하기
-                            List<String> sizes= (List<String>) jsonObject.get("size");
+                            ArrayList<String> sizes= new ArrayList<>();
+                            jsonArray1 = jsonObject.getJSONArray("size");
+                            for(int k = 0; k < jsonArray1.length(); k++){
+                                sizes.add(jsonArray1.getString(k));
+                            }
                             for (int j = 0; j < sizes.size(); j++){ //사이즈 별로 jsonObject를 jsonArray에 추가
-                                textToSpeech.speak((cnt + 1 + j) + "번" + jsonObject.getString("name") + sizes.get(j) + "사이즈" + prices.get(j) + "원", TextToSpeech.QUEUE_ADD, null);
+                                textToSpeech.speak((cnt + 1 + j) + " 번 " + jsonObject.getString("name") + " " + sizes.get(j) + " 사이즈 " + prices.get(j) + " 원", TextToSpeech.QUEUE_ADD, null);
                                 JSONObject jsonObject1 = new JSONObject(arrayId.get(num + i));
                                 jsonObject1.put("size", sizes.get(j));
                                 jsonObject1.put("price", prices.get(j));
                                 jsonArray.put(jsonObject1);
+                                cnt += 1;
                             }
-                            cnt += 1;
                         }
-                        cnt += 1;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -637,39 +705,34 @@ public class Choose_Menu_2 extends AppCompatActivity {
             }
             MenuArray = jsonArray;
             type = "food_name";
-            getUserSpeak("상단 버튼을 누르고 원하는 메뉴의 번호를 말해주세요. 원하는 메뉴가 없으면 0번을 말해주세요.");
+            getUserSpeak("상단 버튼을 누르고 원하는 메뉴의 번호를 말해주시고 원하는 메뉴가 없으면 0번을 말해주세요.");
 
-        }
-
-
-    }
-
-    void goCustom(int i){
-        try {
-            List<String> customList = (List<String>) foodInfo.get("customId"); //json파일에서 customId 리스트 받아오기
-            customId = customList.get(i);
-
-            if(i == 0){
-                chooseTopping();
-            } else if(i == 1){
-                chooseTemp();
-            } else if(i == 2){
-                chooseSweet();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
     void chooseTopping(){
 
         try {
+            JSONArray jsonArray = foodInfo.getJSONArray("customId");
+            customId = jsonArray.getString(0);
+            Log.d("Chk", customId);
+
             type = "topping";
             customArray = getStringId();
             JSONObject object = new JSONObject(customArray);
-            List<String> toppingType = (List<String>) object.get("type");
-            List<String> toppingPrice = (List<String>) object.get("price");
+
+            JSONArray Array = object.getJSONArray("type");
+            ArrayList<String> toppingType = new ArrayList<>();
+            for(int i = 0; i < Array.length(); i++){
+                toppingType.add(Array.getString(i));
+            }
+
+            Array = object.getJSONArray("price");
+            ArrayList<String> toppingPrice = new ArrayList<>();
+            for(int i = 0; i < Array.length(); i++){
+                toppingPrice.add(Array.getString(i));
+            }
+
             int num = set * 5;
 
             if(num > toppingType.size()){
@@ -679,14 +742,13 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
             textToSpeech.speak("토핑은", TextToSpeech.QUEUE_ADD, null);
             for(int i = 0; i < 5; i++) {
-                if (num + i > arrayId.size() || i > 5) { //메뉴 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
+                if (num + i >= toppingType.size()) { //토핑 개수보다 커지거나 5개 이상이 카운트 되면 반복문 탈출
                     break;
                 }
-                textToSpeech.speak((i + 1) + "번" + toppingType.get(num + i) + "가격은" + toppingPrice.get(num + i) + "원", TextToSpeech.QUEUE_ADD, null);
-                i += 1;
+               textToSpeech.speak((i + 1) + "번" + toppingType.get(num + i) + "가격은" + toppingPrice.get(num + i) + "원", TextToSpeech.QUEUE_ADD, null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("추가하고 싶은 토핑 번호를 말해주시고, 원하는 토핑카테고리가 없을 경우 0번을 말해주세요.");
+            getUserSpeak("상단 버튼을 누르고 추가하고 싶은 토핑 번호를 말해주시고, 원하는 토핑카테고리가 없을 경우 0번을 말해주세요.");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -694,6 +756,13 @@ public class Choose_Menu_2 extends AppCompatActivity {
     }
 
     void chooseTemp(){
+        try {
+            JSONArray jsonArray = foodInfo.getJSONArray("customId");
+            customId = jsonArray.getString(1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         type = "temp";
         getUserSpeak("상단 버튼을 누르고 아이스를 원하시면 1번, 핫을 원하시면 2번을 말해 주세요.");
 
@@ -704,31 +773,45 @@ public class Choose_Menu_2 extends AppCompatActivity {
         customArray = getStringId(); //얼음량 custom의 json파일을 string형태로 customArray에 저장
         try {
             JSONObject object = new JSONObject(customArray);
-            List<String> iceType = (List<String>)object.get("type");
+            JSONArray jsonArray = object.getJSONArray("type");
+            ArrayList<String> iceType = new ArrayList<>();
+            for(int i = 0; i < jsonArray.length(); i++){
+                iceType.add(jsonArray.getString(i));
+            }
             textToSpeech.speak("얼음량은", TextToSpeech.QUEUE_ADD, null);
             for(int i = 0; i < iceType.size(); i++){
                 textToSpeech.speak((i + 1) + "번" + iceType.get(i) ,TextToSpeech.QUEUE_ADD,null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("얼음량을 선택해 주세요.");
+            getUserSpeak("상단 버튼을 누르고 얼음량을 선택해 주세요.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
     }
 
-    void chooseSweet(){
+    void chooseSweet(int index){
+        try {
+            JSONArray jsonArray = foodInfo.getJSONArray("customId");
+            customId = jsonArray.getString(index);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         type = "sweet";
         customArray = getStringId();
         try {
             JSONObject object  = new JSONObject(customArray);
-            List<String> sweetType = (List<String>)object.get("type");
+            JSONArray jsonArray = object.getJSONArray("type");
+            ArrayList<String> sweetType = new ArrayList<>();
+            for(int i = 0; i < jsonArray.length(); i++){
+                sweetType.add(jsonArray.getString(i));
+            }
             textToSpeech.speak("당도는", TextToSpeech.QUEUE_ADD, null);
             for(int i = 0; i < sweetType.size(); i++){
                 textToSpeech.speak((i + 1) + "번" + sweetType.get(i) ,TextToSpeech.QUEUE_ADD,null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("당도를 선택해 주세요.");
+            getUserSpeak("상단 버튼을 누르고 당도를 선택해 주세요.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -736,27 +819,27 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     void goQuantity(){
         type = "quantity";
-        getUserSpeak("수량을 얘기해 주세요. 단, 최대 수량은 5개 입니다.");
+        getUserSpeak("상단 버튼을 누르고 수량을 얘기해 주세요. 단, 최대 수량은 5개 입니다.");
     }
 
     void addMenu(){
         try {
             type = "finalMenu";
-            int price = Integer.parseInt((String) foodInfo.get("price"));
+            int price = foodInfo.getInt("price");
             price = price * foodInfo.getInt("quantity");
 
             String name = foodInfo.getString("name");
             Integer quantity = foodInfo.getInt("quantity");
-            String size = null;
-            String temp = null;
-            ArrayList<String> custom = null;
-            if(foodInfo.getString("size") != null){
+            String size = "null";
+            String temp = "null";
+            ArrayList<String> custom = new ArrayList<>();
+            if(!foodInfo.getString("size").equals("null")){
                 size = foodInfo.getString("size");
             }
-            if(foodInfo.getString("temp") != null){
+            if(!foodInfo.getString("temp").equals("null")){
                 temp = foodInfo.getString("temp");
             }
-            if(foodInfo.get("customId") != null){
+            if(foodInfo.get("customId") != "null"){
                 custom = new ArrayList<>();
                 custom.add(foodInfo.getString("toppingType"));
                 custom.add(foodInfo.getString("icedType"));
@@ -767,11 +850,12 @@ public class Choose_Menu_2 extends AppCompatActivity {
             CartList cart = new CartList(name, size, temp, custom, price, quantity);
             cartList.add(cart);
 
-            textToSpeech.speak(foodInfo.getString("name")+"을" + foodInfo.getInt("quantity") + "개 주문하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+            textToSpeech.speak(foodInfo.getString("name")+" 메뉴를 " + foodInfo.getInt("quantity") + "개 주문하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+            Log.d("Chk", foodInfo.toString());
 
-
-            for(int i = 0; i < moveCategory.size(); i++){
-                textToSpeech.speak((i + 1)+ "번" + moveCategory_kor.get(i), TextToSpeech.QUEUE_ADD, null);
+            textToSpeech.speak("돌아가실 수 있는 카테고리는 다음과 같습니다.", TextToSpeech.QUEUE_ADD, null);
+            for(int i = 0; i < 3; i++){
+                textToSpeech.speak((i + 1)+ "번" + moveCategory_kor.get(i) + "카테고리", TextToSpeech.QUEUE_ADD, null);
             }
             getUserSpeak("상단 버튼을 누른 후 주문을 계속하고 싶으면 원하는 카테고리의 번호를 말하고 주문을 마치고 싶으면 0번을 말해주세요.");
         } catch (JSONException e) {

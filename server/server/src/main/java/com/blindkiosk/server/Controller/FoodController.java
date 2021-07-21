@@ -35,4 +35,18 @@ public class FoodController {
 
         return Adapter.foodResponse(foodModels,errors);
     }
+
+    @GetMapping("allfood")
+    @ResponseBody
+    public FoodResponse getAllFood(@RequestParam(value = "id") String id){
+        List<String> errors=new ArrayList<>();
+        List<FoodModel> foodModels=null;
+
+        try {
+            foodModels=foodService.getAllFood(id);
+        }catch (final Exception e){
+            errors.add(e.getMessage());
+        }
+        return Adapter.foodResponse(foodModels,errors);
+    }
 }

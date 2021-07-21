@@ -22,4 +22,5 @@ public class CartList implements Serializable {
         this.quantity = quantity;
     }
 
+
 }

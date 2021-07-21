@@ -442,12 +442,12 @@ public class MenuAPI {
                 result = result.concat(line);
             }
 
-            Log.d("Chk",result);
+            //Log.d("Chk",result);
             JSONObject jsonObject = new JSONObject(result);
-            JSONArray categoryArray = (JSONArray) jsonObject.get("data");
+            JSONArray customArray = (JSONArray) jsonObject.get("data");
 
-            customId = (String) categoryArray.get(0);
-
+            customId = customArray.getString(0);
+            Log.d("Chk", customId);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -460,5 +460,43 @@ public class MenuAPI {
         return customId;
     }
 
+    static List<String> allMenu(String id){
+        List<String> list = null;
+        try {
+            URL url = new URL("http://ec2-18-117-207-121.us-east-2.compute.amazonaws.com:8080/allfood?id=" + id);
 
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setRequestMethod("GET");
+
+
+            String line;
+            String result = "";
+            BufferedReader bf = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+
+            while ((line = bf.readLine()) != null) {
+                result = result.concat(line);
+            }
+
+            Log.d("Chk",result);
+            JSONObject jsonObject = new JSONObject(result);
+            JSONArray categoryArray = (JSONArray) jsonObject.get("data");
+
+            list = new ArrayList<>();
+            for (int i = 0; i < categoryArray.length(); i++) {
+                list.add(categoryArray.get(i).toString());
+            }
+
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
 }

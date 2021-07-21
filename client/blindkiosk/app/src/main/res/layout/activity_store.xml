@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".StoreActivity" >
+    android:background="#757776"
+    tools:context=".StoreActivity">
 
     <TextView
         android:id="@+id/TextViewLocation"

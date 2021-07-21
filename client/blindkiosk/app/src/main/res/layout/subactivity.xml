@@ -11,7 +11,7 @@
         android:layout_width="411dp"
         android:layout_height="258dp"
         android:textSize="50sp"
-        android:text="음성인식 버튼" />
+        android:text="음성인식" />
 
     <TextView
         android:id="@+id/textview"

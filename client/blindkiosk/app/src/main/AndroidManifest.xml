@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Choose_Menu_1"></activity>
+
         <activity android:name=".StoreActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Choose_Menu" />
+        <activity android:name=".Choose_Menu_1"/>
         <activity android:name=".Choose_Menu_2" />
         <activity android:name=".Choose_Menu_3" />
         <activity android:name=".LastOrder" />

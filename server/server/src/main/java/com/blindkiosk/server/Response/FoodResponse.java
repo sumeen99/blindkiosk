@@ -14,4 +14,5 @@ public class FoodResponse extends ApiResponse<List<FoodModel>> {
         this.setErrors(errors);
 
     }
+
 }

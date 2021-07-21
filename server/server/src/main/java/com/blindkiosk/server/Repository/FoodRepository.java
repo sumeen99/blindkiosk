@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface FoodRepository extends MongoRepository<FoodModel,String> {
     List<FoodModel> findBySubcategoryId(String id);
+    List<FoodModel> findByStoreId(String id);
 }

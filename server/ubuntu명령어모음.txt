@@ -1,0 +1,14 @@
+18.117.207.121 //퍼블릭 ip주소
+https://github.com/sumeen99/blindkiosk.git //git 주소
+sudo git pull / 수정사항있을시 pull
+cd blindkiosk/server/server //디렉토리 이동
+sudo chmod 777 ./gradlew //gradlew 권한열기
+sudo ./gradlew build --stacktrace//--stacktrace 빼는게 기본임 암튼 jar파일 빌드
+ls build/libs //jar파일확인
+fuser -k -n tcp 8080//8080포트 죽이기
+java -jar build/libs/server-0.0.1-SNAPSHOT.jar//jar파일 배포
+nohup java -jar build/libs/server-0.0.1-SNAPSHOT.jar &//꺼도 상관없게하기
+
+
+mongodump --db blindkiosk //blindkiosk db dump파일 추출 + --collection 컬렉션명 하면 컬렉선따로 
+mongorestore --db blindkiosk blindkiosk/server/dump/blindkiosk//blindkiosk db dump파일 저장 + --collection 컬렉션명 파일경로 전에 하면 가능

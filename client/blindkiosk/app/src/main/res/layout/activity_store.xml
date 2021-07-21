@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#757776"
     tools:context=".StoreActivity" >
 
     <TextView
@@ -23,11 +24,12 @@
         android:id="@+id/btnSpeech"
         android:layout_width="354dp"
         android:layout_height="242dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/speak_button_round"
         android:text="말하기"
         android:textColor="#000000"
         android:textSize="90sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,7 +49,7 @@
         android:id="@+id/btnOK"
         android:layout_width="359dp"
         android:layout_height="254dp"
-        android:background="#000000"
+        android:background="@drawable/ok_button_round"
         android:text="확인"
         android:textColor="#FFFFFF"
         android:textSize="90sp"

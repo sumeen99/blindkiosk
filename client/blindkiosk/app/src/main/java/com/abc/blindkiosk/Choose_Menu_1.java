@@ -269,7 +269,11 @@ public class Choose_Menu_1 extends AppCompatActivity {
         for (int i = set * 5; i < set * 5 + 5; i++) {
             if (i < foodList.size()) {
                 FoodInfo food = foodList.get(i);
-                textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + " " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
+                if(food.size==null) {
+                    textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
+                }else {
+                    textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + "사이즈 " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
+                }
                 numberCnt = i - set * 5 + 1;
             }
         }
@@ -546,7 +550,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
             }
 
             answerInfo = number.findNumberByCnt(answer.getText().toString(), numberCnt);
-            Toast.makeText(context, "사용자 답변 확인.", Toast.LENGTH_SHORT).show();
+
             if (answerInfo == null) {
                 textToSpeech.speak("번호를 인식하지 못하였습니다. 화면 상단을 눌러 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
             } else {

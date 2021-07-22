@@ -30,7 +30,7 @@ public class LastOrder extends AppCompatActivity {
         setContentView(R.layout.activity_lastorder);
 
         menuList = (ArrayList<CartList>) getIntent().getSerializableExtra("menuList");
-        textView = findViewById(R.id.textView);
+        textView = findViewById(R.id.textview);
         button_payment = findViewById(R.id.button_payment);
         button_modify = findViewById(R.id.button_modify);
         context = getApplicationContext();

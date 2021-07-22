@@ -30,7 +30,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
     Button btnSpeech;
     Button btnOK;
     TextView answer;
-    TextView stepView;
     Context context;
     String answerInfo;
     Number number = new Number();
@@ -50,7 +49,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
     int numberCnt;
     FoodInfo userFood;
 
-    ArrayList<CartList> cartList;
+    ArrayList<CartList> cartList = new ArrayList<CartList>();
     String name;
     String size;
     String temp;
@@ -62,12 +61,11 @@ public class Choose_Menu_1 extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_store);
+        setContentView(R.layout.activity_choose_menu);
 
-        btnSpeech = (Button) findViewById(R.id.btnSpeech);
-        btnOK = (Button) findViewById(R.id.btnOK);
-        answer = (TextView) findViewById(R.id.TextViewAnswer);
-        stepView = (TextView) findViewById(R.id.TextViewLocation);
+        btnSpeech = (Button) findViewById(R.id.button_speak);
+        btnOK = (Button) findViewById(R.id.button_payment);
+        answer = (TextView) findViewById(R.id.textView);
         context = getApplicationContext();
         intent = getIntent();
         storeName = intent.getStringExtra("storeName");
@@ -78,7 +76,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
                 if (status == TextToSpeech.SUCCESS) {
                     textToSpeech.setLanguage(Locale.KOREAN);
                     step = Constants.CATEGORY_CHOOSE_STEPS;
-                    stepView.setText("카테고리 선택");
                     chooseCategory();
                 }
             }
@@ -168,7 +165,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
         set = 0;
         textToSpeech.speak(categoryInfo.name + "하위 메뉴 카테고리 선택으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
         step = Constants.SUBCATEGORY_CHOOSE_STEPS;
-        stepView.setText("하위 카테고리 선택");
         chooseSubcategory();
     }
 
@@ -227,7 +223,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
         set = 0;
         textToSpeech.speak(subcategoryInfo.name + "음식 선택으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
         step = Constants.FOOD_CHOOSE_STEPS;
-        stepView.setText("음식 선택");
         chooseFood();
     }
 
@@ -293,7 +288,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
         customCartList = new ArrayList<String>();
         if (userFood.temp) {
             step = Constants.TEMP_CHOOSE_STEPS;
-            stepView.setText("ice/hot 선택");
             chooseTemp();
         } else {
             temp = (null);
@@ -321,12 +315,10 @@ public class Choose_Menu_1 extends AppCompatActivity {
         if (userFood.customId == null) {
             customList = (null);   //커스텀 정보 없음
             step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
-            stepView.setText("음식 수량 선택");
             chooseFoodQuantity();
         } else {
             set = 0;
             step = Constants.CUSTOM_CHOOSE_STEPS;
-            stepView.setText("옵션 선택");
             chooseCustom();
         }
     }
@@ -361,7 +353,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
             textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
             customList = ((ArrayList<String>) customCartList);//커스텀 정보 담기
             step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
-            stepView.setText("음식 수량 선택");
             chooseFoodQuantity();
         } else {
             textToSpeech.speak(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1) + " 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
@@ -415,7 +406,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
         textToSpeech.speak("장바구니에 음식을 담았습니다.", TextToSpeech.QUEUE_ADD, null);
         numberCnt = 3;
         step = Constants.CASH_OR_ADD_STEPS;
-        stepView.setText("결제/추가주문 선택");
         getUserSpeak("결제를 원하시면 1번, 하위 카테고리에서 주문을 원하시면 2번, 상위 카테고리에서 주문을 원하시면 3번을 눌러주세요.");
 
 
@@ -434,7 +424,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
                 set = 0;
                 customInfoOrder = 0;
                 step = Constants.FOOD_CHOOSE_STEPS;
-                stepView.setText("음식 선택");
                 chooseFood();
                 break;
             case 3:
@@ -446,7 +435,6 @@ public class Choose_Menu_1 extends AppCompatActivity {
                 set = 0;
                 customInfoOrder = 0;
                 step = Constants.SUBCATEGORY_CHOOSE_STEPS;
-                stepView.setText("하위 카테고리 선택");
                 chooseSubcategory();
                 break;
         }

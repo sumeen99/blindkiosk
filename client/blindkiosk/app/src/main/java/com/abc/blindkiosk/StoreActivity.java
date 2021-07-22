@@ -35,7 +35,6 @@ import java.util.concurrent.Future;
 
 public class StoreActivity extends AppCompatActivity {
     TextToSpeech textToSpeech;
-    TextView position;
 
     Button btnSpeech;
     Button btnOK;
@@ -51,6 +50,7 @@ public class StoreActivity extends AppCompatActivity {
 
     String answerInfo;
     Number number = new Number();
+    Store store = new Store();
 
     int set = 0;
     List<String> stores;
@@ -58,12 +58,11 @@ public class StoreActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_store);
+        setContentView(R.layout.activity_choose_menu);
 
-        btnSpeech = (Button) findViewById(R.id.btnSpeech);
-        btnOK = (Button) findViewById(R.id.btnOK);
-        position = (TextView) findViewById(R.id.TextViewLocation);
-        answer = (TextView) findViewById(R.id.TextViewAnswer);
+        btnSpeech = (Button) findViewById(R.id.button_speak);
+        btnOK = (Button) findViewById(R.id.button_payment);
+        answer = (TextView) findViewById(R.id.textView);
 
         intent = getIntent();
         context = getApplicationContext();
@@ -108,8 +107,6 @@ public class StoreActivity extends AppCompatActivity {
         public void onLocationChanged(@NonNull Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-            position.setText("위도 : " + latitude + "\n" + "경도 : " + longitude);
-            //Toast.makeText(getApplicationContext(), "위도 : " + latitude + "\n" + "경도 : " + longitude , Toast.LENGTH_SHORT).show();
             textToSpeech.speak("사용자 위치를 탐색 완료하였습니다.", TextToSpeech.QUEUE_ADD, null);
             locationManager.removeUpdates(mLocationListener);
             chooseStore();
@@ -262,8 +259,9 @@ public class StoreActivity extends AppCompatActivity {
             @Override
             public List<String> call() {
                 StoreAPI storeAPI = new StoreAPI();
-                //return storeAPI.access(127.07307033455444 + "", 37.547275328253214 + "");
-                return storeAPI.access(127.07373482196793+"", 37.547173391279266+"");
+                //x=경도, y=위도
+                //return storeAPI.access(longitude + "", latitude + "");
+                return storeAPI.access(127.07373482196793 + "", 37.547173391279266 + "");
 
             }
         };
@@ -286,7 +284,7 @@ public class StoreActivity extends AppCompatActivity {
             textToSpeech.speak("주변 가게가 없습니다.", TextToSpeech.QUEUE_ADD, null);
             return;
         }
-        if(set*5>stores.size()){
+        if (set * 5 > stores.size()) {
             set = 0;
             textToSpeech.speak("모든 가게 정보를 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
         }
@@ -304,10 +302,15 @@ public class StoreActivity extends AppCompatActivity {
 
     void getStoreName() {
         String storeName = stores.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1);
-        Log.d("StoreName", storeName);
         textToSpeech.speak(storeName + "을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-        Intent storeNameIntent = new Intent(this,Choose_Menu.class);
-        storeNameIntent.putExtra("storeName","공차");
-        startActivity(storeNameIntent);
+        Log.d("StoreName", storeName);
+        storeName = store.findStore(storeName);
+        if (storeName == null) {
+            textToSpeech.speak("해당 가게에 대한 정보가 없습니다.", TextToSpeech.QUEUE_ADD, null);
+        } else {
+            Intent storeNameIntent = new Intent(this, Choose_Menu.class);
+            storeNameIntent.putExtra("storeName", storeName);
+            startActivity(storeNameIntent);
+        }
     }
 }

@@ -70,8 +70,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
         button_speak = findViewById(R.id.button_speak);
         button_ok = findViewById(R.id.button_payment);
         storeIntent = getIntent();
-        //storeName = storeIntent.getStringExtra("storeName");
-        storeName = "공차";
+        storeName = storeIntent.getStringExtra("storeName");
         context = getApplicationContext();
 
         if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

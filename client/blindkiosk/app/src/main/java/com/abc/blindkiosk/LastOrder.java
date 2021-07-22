@@ -61,6 +61,9 @@ public class LastOrder extends AppCompatActivity {
             if(!cartList.temp.equals("false")){
                 textToSpeech.speak(cartList.temp, TextToSpeech.QUEUE_ADD, null);
             }
+            if(cartList.customList.size() != 0){
+                textToSpeech.speak(cartList.customList.get(0) + " 추가", TextToSpeech.QUEUE_ADD, null);
+            }
             textToSpeech.speak("수량 " + cartList.quantity + " 개", TextToSpeech.QUEUE_ADD, null);
             price += cartList.price;
         }
@@ -68,19 +71,19 @@ public class LastOrder extends AppCompatActivity {
 
         textToSpeech.speak("메뉴를 다시 선택하고 싶으면 상단버튼을 누르고 결제를 하시려면 하단 버튼을 눌러주세요.", TextToSpeech.QUEUE_ADD, null);
 
+        final Intent reintent = new Intent(this, Choose_Menu.class);
         button_modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Choose_Menu.class);
-                startActivity(intent);
+                startActivity(reintent);
             }
         });
 
+        final Intent numintent = new Intent(this, OrderNum.class);
         button_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, OrderNum.class);
-                startActivity(intent);
+                startActivity(numintent);
             }
         });
     }

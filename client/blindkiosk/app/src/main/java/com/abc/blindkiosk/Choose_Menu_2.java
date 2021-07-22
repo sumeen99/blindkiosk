@@ -64,7 +64,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
     String subcategoryId;
     String material;
     String customId;
-    JSONObject foodInfo; //카트에 넣을 메뉴 정보를 담는 json - (+icedType)
+    JSONObject foodInfo; //카트에 넣을 메뉴 정보를 담는 json - (+iceType)
 
     ArrayList<CartList> cartList = new ArrayList<>();
     ArrayList<String> moveCategory_kor = new ArrayList<>(Arrays.asList("상위", "하위", "메뉴명"));
@@ -73,7 +73,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.choose_menu_2);
+        setContentView(R.layout.activity_choose_menu);
 
         textView = findViewById(R.id.textView);
 
@@ -406,7 +406,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
                             case "temp":
                                 if (numberinfo.equals("1")) {
                                     try {
-                                        foodInfo.put("temp", "iced");
+                                        foodInfo.put("temp", "ice");
                                         textToSpeech.speak("아이스를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -431,7 +431,7 @@ public class Choose_Menu_2 extends AppCompatActivity {
                                         iceList.add(jsonArray.getString(i));
                                     }
                                     String iceType = iceList.get(Integer.parseInt(numberinfo) - 1);
-                                    foodInfo.put("icedType", iceType);
+                                    foodInfo.put("iceType", iceType);
                                     textToSpeech.speak("선택하신 얼음량은 " + iceType + " 입니다.", TextToSpeech.QUEUE_ADD, null);
                                     textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
@@ -504,17 +504,14 @@ public class Choose_Menu_2 extends AppCompatActivity {
                             break;
                         case "topping":
                             try {
-                                if(foodInfo.getString("temp").equals("true")){
+                                if (foodInfo.getString("temp").equals("true")) {
                                     chooseTemp();
-                                } else{
-                                    foodInfo.put("temp", null);
-                                    foodInfo.put("icedType", null);
-                                    if(foodInfo.getJSONArray("customId").length() > 1){
-                                        chooseSweet(1);
-                                    }
-                                    else{
-                                        foodInfo.put("sweetType", null);
+                                } else {
+                                    if (foodInfo.getJSONArray("customId").length() == 1){
+                                        foodInfo.put("iceType", "null");
                                         goQuantity();
+                                    } else if (foodInfo.getJSONArray("customId").length() >= 2){
+                                        customIce();
                                     }
                                 }
                             } catch (JSONException e) {
@@ -522,19 +519,30 @@ public class Choose_Menu_2 extends AppCompatActivity {
                             }
                             break;
                         case "temp":
-                            if(numberinfo.equals("1")){
-                                try {
-                                    foodInfo.put("temp", "iced");
+                            try {
+                                if (numberinfo.equals("1")) {
+                                    foodInfo.put("temp", "ice");
                                     customIce();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                } else {
+                                    foodInfo.put("iceType", "null");
+                                    if (foodInfo.getJSONArray("customId").length() > 2) {
+                                        chooseSweet();
+                                    }
                                 }
-                            } else{
-                                chooseSweet(2);
+                            } catch (JSONException jsonException) {
+                                jsonException.printStackTrace();
                             }
                             break;
                         case "iceAmount":
-                            chooseSweet(2);
+                            try {
+                                if (foodInfo.getJSONArray("customId").length() > 2) {
+                                    chooseSweet();
+                                } else {
+                                    goQuantity();
+                                }
+                            } catch (JSONException jsonException) {
+                                jsonException.printStackTrace();
+                            }
                             break;
                         case "sweet":
                             goQuantity();
@@ -769,9 +777,13 @@ public class Choose_Menu_2 extends AppCompatActivity {
     }
 
     void customIce(){
-        type = "iceAmount";
-        customArray = getStringId(); //얼음량 custom의 json파일을 string형태로 customArray에 저장
         try {
+            JSONArray Array = foodInfo.getJSONArray("customId");
+            customId = Array.getString(1);
+
+            type = "iceAmount";
+            customArray = getStringId(); //얼음량 custom의 json파일을 string형태로 customArray에 저장
+
             JSONObject object = new JSONObject(customArray);
             JSONArray jsonArray = object.getJSONArray("type");
             ArrayList<String> iceType = new ArrayList<>();
@@ -790,10 +802,10 @@ public class Choose_Menu_2 extends AppCompatActivity {
 
     }
 
-    void chooseSweet(int index){
+    void chooseSweet(){
         try {
             JSONArray jsonArray = foodInfo.getJSONArray("customId");
-            customId = jsonArray.getString(index);
+            customId = jsonArray.getString(2);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -833,18 +845,23 @@ public class Choose_Menu_2 extends AppCompatActivity {
             String size = "null";
             String temp = "null";
             ArrayList<String> custom = new ArrayList<>();
-            if(!foodInfo.getString("size").equals("null")){
+
+            if (!foodInfo.getString("size").equals("null")) {
                 size = foodInfo.getString("size");
             }
-            if(!foodInfo.getString("temp").equals("null")){
-                temp = foodInfo.getString("temp");
-            }
-            if(foodInfo.get("customId") != "null"){
-                custom = new ArrayList<>();
-                custom.add(foodInfo.getString("toppingType"));
-                custom.add(foodInfo.getString("icedType"));
-                custom.add(foodInfo.getString("sweetType"));
+            if (foodInfo.get("customId") != "null") {
+                custom.add(0, foodInfo.getString("toppingType"));
                 price += foodInfo.getInt("toppingPrice");
+                if (foodInfo.getJSONArray("customId").length() >= 2){
+                    temp = foodInfo.getString("temp");
+                    if (!foodInfo.getString("temp").equals("hot")){
+                        custom.add(foodInfo.getString("iceType"));
+                    }
+                    if (foodInfo.getJSONArray("customId").length() == 3){
+                        custom.add(foodInfo.getString("sweetType"));
+
+                    }
+                }
             }
 
             CartList cart = new CartList(name, size, temp, custom, price, quantity);

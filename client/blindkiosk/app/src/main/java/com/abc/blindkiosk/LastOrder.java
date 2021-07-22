@@ -56,12 +56,12 @@ public class LastOrder extends AppCompatActivity {
             CartList cartList = menuList.get(i);
             textToSpeech.speak((i + 1) + " 번" + cartList.name, TextToSpeech.QUEUE_ADD, null);
             if(!cartList.size.equals("null")){
-                textToSpeech.speak(cartList.size + "사이즈", TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak(cartList.size + " 사이즈", TextToSpeech.QUEUE_ADD, null);
             }
-            if(!cartList.temp.equals("null")){
+            if(!cartList.temp.equals("false")){
                 textToSpeech.speak(cartList.temp, TextToSpeech.QUEUE_ADD, null);
             }
-            textToSpeech.speak(cartList.quantity + "개", TextToSpeech.QUEUE_ADD, null);
+            textToSpeech.speak("수량 " + cartList.quantity + " 개", TextToSpeech.QUEUE_ADD, null);
             price += cartList.price;
         }
         textToSpeech.speak("총" + price + "원 입니다.", TextToSpeech.QUEUE_ADD, null);
@@ -79,7 +79,7 @@ public class LastOrder extends AppCompatActivity {
         button_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Payment.class);
+                Intent intent = new Intent(context, OrderNum.class);
                 startActivity(intent);
             }
         });

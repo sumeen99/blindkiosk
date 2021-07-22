@@ -78,7 +78,7 @@ public class Choose_Menu extends AppCompatActivity {
     void chooseOrderMode() {
         Toast.makeText(getApplicationContext(), "주문 모드 선택.", Toast.LENGTH_SHORT).show();
         textToSpeech.speak("주문 모드는", TextToSpeech.QUEUE_ADD, null);
-        textToSpeech.speak("1번 전체 메뉴 읽기.", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("1번 전체 메뉴로 선택하기.", TextToSpeech.QUEUE_ADD, null);
         textToSpeech.speak("2번 카테고리별 메뉴 선택하기.", TextToSpeech.QUEUE_ADD, null);
         textToSpeech.speak("3번 바로 메뉴 선택하기.", TextToSpeech.QUEUE_ADD, null);
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);

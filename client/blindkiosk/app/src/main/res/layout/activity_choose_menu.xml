@@ -10,16 +10,16 @@
         android:id="@+id/button_speak"
         android:layout_width="413dp"
         android:layout_height="250dp"
-        android:background="#FFFFFF"
-        android:textColor="#000000"
+        android:background="@drawable/speak_button_round"
+        android:text="말하기"
+        android:textColor="@color/speak_text_color"
         android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="말하기" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView"
@@ -40,9 +40,9 @@
         android:id="@+id/button_payment"
         android:layout_width="406dp"
         android:layout_height="259dp"
-        android:background="#000000"
+        android:background="@drawable/ok_button_round"
         android:text="확인"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/ok_text_color"
         android:textSize="50sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

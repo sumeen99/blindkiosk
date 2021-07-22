@@ -10,8 +10,9 @@
         android:id="@+id/btn"
         android:layout_width="411dp"
         android:layout_height="258dp"
-        android:textSize="50sp"
-        android:text="주문 방식 선택" />
+        android:background="#000000"
+        android:text="주문 방식 선택"
+        android:textSize="50sp" />
 
     <TextView
         android:id="@+id/textview"

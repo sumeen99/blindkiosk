@@ -56,31 +56,34 @@ public class LastOrder extends AppCompatActivity {
             CartList cartList = menuList.get(i);
             textToSpeech.speak((i + 1) + " 번" + cartList.name, TextToSpeech.QUEUE_ADD, null);
             if(!cartList.size.equals("null")){
-                textToSpeech.speak(cartList.size + "사이즈", TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak(cartList.size + " 사이즈", TextToSpeech.QUEUE_ADD, null);
             }
-            if(!cartList.temp.equals("null")){
+            if(!cartList.temp.equals("false")){
                 textToSpeech.speak(cartList.temp, TextToSpeech.QUEUE_ADD, null);
             }
-            textToSpeech.speak(cartList.quantity + "개", TextToSpeech.QUEUE_ADD, null);
+            if(cartList.customList.size() != 0){
+                textToSpeech.speak(cartList.customList.get(0) + " 추가", TextToSpeech.QUEUE_ADD, null);
+            }
+            textToSpeech.speak("수량 " + cartList.quantity + " 개", TextToSpeech.QUEUE_ADD, null);
             price += cartList.price;
         }
         textToSpeech.speak("총" + price + "원 입니다.", TextToSpeech.QUEUE_ADD, null);
 
         textToSpeech.speak("메뉴를 다시 선택하고 싶으면 상단버튼을 누르고 결제를 하시려면 하단 버튼을 눌러주세요.", TextToSpeech.QUEUE_ADD, null);
 
+        final Intent reintent = new Intent(this, Choose_Menu.class);
         button_modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Choose_Menu.class);
-                startActivity(intent);
+                startActivity(reintent);
             }
         });
 
+        final Intent numintent = new Intent(this, OrderNum.class);
         button_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Payment.class);
-                startActivity(intent);
+                startActivity(numintent);
             }
         });
     }

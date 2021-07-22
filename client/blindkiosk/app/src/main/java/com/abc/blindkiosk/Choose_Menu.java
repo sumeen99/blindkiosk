@@ -25,11 +25,6 @@ import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class Choose_Menu extends AppCompatActivity {
 
@@ -49,7 +44,7 @@ public class Choose_Menu extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.subactivity);
+        setContentView(R.layout.activity_selectmethod);
 
 
         textView = findViewById(R.id.textview);
@@ -204,14 +199,17 @@ public class Choose_Menu extends AppCompatActivity {
         }
         else{
             if (numberinfo.equals("1")) {
+                textToSpeech.speak("1번 전체 메뉴 읽기를 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
                 Intent intent = new Intent(this, Choose_Menu_1.class);
                 intent.putExtra("storeName", storeName);
                 startActivity(intent);
             } else if (numberinfo.equals("2")) {
+                textToSpeech.speak("2번 카테고리별 메뉴 선택하기를 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
                 Intent intent = new Intent(this, Choose_Menu_2.class);
                 intent.putExtra("storeName", storeName);
                 startActivity(intent);
             } else if (numberinfo.equals("3")) {
+                textToSpeech.speak("3번 바로 메뉴 선택하기를 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
                 Intent intent = new Intent(this, Choose_Menu_3.class);
                 intent.putExtra("storeName", storeName);
                 startActivity(intent);

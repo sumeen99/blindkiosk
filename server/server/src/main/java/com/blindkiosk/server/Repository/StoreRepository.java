@@ -4,9 +4,12 @@ import com.blindkiosk.server.Model.StoreModel;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface StoreRepository extends MongoRepository<StoreModel,String>{
     public StoreModel findByName(String name);
+    List<StoreModel> findAllBy();
 }
 
  /*private final JdbcTemplate jdbcTemplate;

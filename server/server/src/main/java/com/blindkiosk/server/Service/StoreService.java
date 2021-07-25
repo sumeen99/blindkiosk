@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -67,24 +68,32 @@ public class StoreService {
     }*/
 
     public List<String> putStoreList(double x,double y) throws ParseException {
-        List<String> userStoreList;
-        List<StoreModel> storeList;
-        List<String> name=new ArrayList<>();
-        int userStoreIndex=0;
+        List<String> userStoreList; //사용자 주변 가게목록
+        List<StoreModel> storeList;//DB에 있는 가게목록
+        List<String> name=new ArrayList<>();//DB에 있는 가게목록이름들
+
 
         SearchApi searchApi= new SearchApi();
         userStoreList=searchApi.search(x,y,15);//사용자 주변 가게 목록
         storeList=storeRepository.findAllBy();//DB에 있는 가게 목록
-        //userStoreIndex=userStoreList.size();
 
         for(StoreModel list:storeList){
             name.add(list.getName());
         }
-        for(String list:userStoreList){
-            if(!name.contains(list)){
-                userStoreList.remove(userStoreIndex); //indexOf 함수쓰는건 시간복잡도를 갖게되므로 그냥 i 쓰는게 나을듯
+
+        Iterator<String> list=userStoreList.iterator();
+        while(list.hasNext()){
+            String a=list.next();
+            System.out.println(a);
+            int i=1;
+            for(String store:name){
+                if(a.contains(store))break;
+                if(!a.contains(store)&&i==name.size()){
+                    list.remove();
+                    break;
+                }
+                i++;
             }
-            userStoreIndex++;
         }
         return userStoreList;
     }

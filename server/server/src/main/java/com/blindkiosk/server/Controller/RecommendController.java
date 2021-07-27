@@ -21,10 +21,10 @@ public class RecommendController {
 
     @GetMapping("recommend")
     @ResponseBody
-    public RecommendResponse get(@RequestParam(value = "id") String id){
+    public RecommendResponse get(@RequestParam(value = "id") List<String> id){
 
         List<String> errors=new ArrayList<>();
-        List<RecommendModel> recommendModels = null;
+        RecommendModel recommendModels = null;
 
         try{
             recommendModels= recommendService.getRecommend(id);

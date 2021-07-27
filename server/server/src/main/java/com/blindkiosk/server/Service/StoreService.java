@@ -25,8 +25,6 @@ public class StoreService {
 
 
 
-
-
     public List<String> putStoreList(double x,double y) throws ParseException {
         List<String> userStoreList; //사용자 주변 가게목록
         List<StoreModel> storeList;//DB에 있는 가게목록

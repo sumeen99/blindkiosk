@@ -6,10 +6,10 @@ import lombok.Builder;
 
 import java.util.List;
 
-public class RecommendResponse extends ApiResponse<List<RecommendModel>> {
+public class RecommendResponse extends ApiResponse<RecommendModel> {
 
     @Builder
-    public RecommendResponse(final List<RecommendModel> recommendModels,final List<String> errors){
+    public RecommendResponse(final RecommendModel recommendModels,final List<String> errors){
         super(recommendModels);
         this.setErrors(errors);
     }

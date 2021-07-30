@@ -51,6 +51,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
     FoodInfo userFood;
 
     ArrayList<CartList> cartList;
+    String id;
     String name;
     String size;
     String temp;
@@ -288,6 +289,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
         Log.d("FoodName", userFood.name);
         textToSpeech.speak(userFood.name + "음식을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
         name = (userFood.name);    //장바구니에 음식 이름 저장
+        id = (userFood.id);
         price = (Integer.parseInt(userFood.price));
         size = (userFood.size);
         customCartList = new ArrayList<String>();
@@ -453,11 +455,12 @@ public class Choose_Menu_1 extends AppCompatActivity {
     }
 
     void pay() {
-        CartList cart = new CartList(name, size, temp, customList, price, quantity);
+        CartList cart = new CartList(id, name, size, temp, customList, price, quantity);
         cartList.add(cart);
 
-        Intent cartIntent = new Intent(context, LastOrder.class);
+        Intent cartIntent = new Intent(context, RecommendActivity.class);
         cartIntent.putExtra("menuList", cartList);
+        cartIntent.putExtra("storeId", menuIdInfo.storeId);
         startActivity(cartIntent);
     }
 

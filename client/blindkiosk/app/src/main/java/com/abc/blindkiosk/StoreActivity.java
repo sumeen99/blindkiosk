@@ -131,6 +131,7 @@ public class StoreActivity extends AppCompatActivity {
         btnSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textToSpeech.stop();
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(StoreActivity.this); //
                 mRecognizer.setRecognitionListener(listener);   //모든 콜백을 수신하는 리스너 설정
                 mRecognizer.startListening(intent);
@@ -224,6 +225,7 @@ public class StoreActivity extends AppCompatActivity {
                 btnOK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        textToSpeech.stop();
                         answer.setText(answerInfo);
                         if (Integer.parseInt(answer.getText().toString()) == 0) {
                             textToSpeech.speak("가게 목록을 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
@@ -262,8 +264,8 @@ public class StoreActivity extends AppCompatActivity {
             @Override
             public List<String> call() {
                 StoreAPI storeAPI = new StoreAPI();
-                //return storeAPI.access(127.07307033455444 + "", 37.547275328253214 + "");
-                return storeAPI.access(127.07373482196793+"", 37.547173391279266+"");
+                return storeAPI.access(127.07307033455444 + "", 37.547275328253214 + "");
+                //return storeAPI.access(127.07373482196793+"", 37.547173391279266+"");
 
             }
         };

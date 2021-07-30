@@ -16,7 +16,6 @@
         android:theme="@style/Theme.AppCompat.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <activity android:name=".StoreActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".StoreActivity" />
         <activity android:name=".Choose_Menu" />
         <activity android:name=".Choose_Menu_1"/>
         <activity android:name=".Choose_Menu_2" />
         <activity android:name=".Choose_Menu_3" />
         <activity android:name=".LastOrder" />
+        <activity android:name=".RecommendActivity"/>
         <activity android:name=".OrderNum" />
     </application>
 

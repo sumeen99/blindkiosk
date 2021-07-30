@@ -30,4 +30,8 @@ public class Adapter {
     public static CustomResponse customResponse(final List<CustomModel> customModels, final List<String> errors){
         return CustomResponse.builder().customModels(customModels).errors(errors).build();
     }
+
+    public static RecommendResponse recommendResponse(final RecommendModel recommendModels,final List<String> errors){
+        return RecommendResponse.builder().recommendModels(recommendModels).errors(errors).build();
+    }
 }

@@ -9,8 +9,9 @@
     <Button
         android:id="@+id/button_speak"
         android:background="@drawable/speak_button_round"
-        android:layout_width="413dp"
-        android:layout_height="250dp"
+        android:text="말하기"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:textColor="@color/speak_text_color"
         android:textSize="90sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,15 +19,13 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="말하기" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="318dp"
         android:layout_height="51dp"
         android:gravity="center"
-        android:text="TextView"
         android:textColor="#FFFFFF"
         android:textSize="40sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,12 +37,13 @@
 
     <Button
         android:id="@+id/button_payment"
-        android:layout_width="414dp"
-        android:layout_height="253dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:background="@drawable/ok_button_round"
         android:text="확인"
         android:textColor="@color/ok_text_color"
         android:textSize="90sp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

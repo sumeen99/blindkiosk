@@ -30,11 +30,10 @@ public class LastOrder extends AppCompatActivity {
         setContentView(R.layout.activity_lastorder);
 
         menuList = (ArrayList<CartList>) getIntent().getSerializableExtra("menuList");
-        textView = findViewById(R.id.textView);
+        textView = findViewById(R.id.textview);
         button_payment = findViewById(R.id.button_payment);
         button_modify = findViewById(R.id.button_modify);
         context = getApplicationContext();
-
 
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -63,27 +62,35 @@ public class LastOrder extends AppCompatActivity {
             }
             if(cartList.customList.size() != 0){
                 textToSpeech.speak(cartList.customList.get(0) + " 추가", TextToSpeech.QUEUE_ADD, null);
+                if(cartList.customList.size() >= 2){
+                    textToSpeech.speak(cartList.customList.get(1), TextToSpeech.QUEUE_ADD, null);
+                    if(cartList.customList.size() >= 3){
+                        textToSpeech.speak(cartList.customList.get(2), TextToSpeech.QUEUE_ADD, null);
+                    }
+                }
             }
             textToSpeech.speak("수량 " + cartList.quantity + " 개", TextToSpeech.QUEUE_ADD, null);
             price += cartList.price;
         }
         textToSpeech.speak("총" + price + "원 입니다.", TextToSpeech.QUEUE_ADD, null);
 
-        textToSpeech.speak("메뉴를 다시 선택하고 싶으면 상단버튼을 누르고 결제를 하시려면 하단 버튼을 눌러주세요.", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("결제를 하시려면 하단 버튼을 누르고 메뉴를 다시 선택하고 싶으면 상단버튼을 눌러주세요.", TextToSpeech.QUEUE_ADD, null);
 
-        final Intent reintent = new Intent(this, Choose_Menu.class);
+        final Intent reIntent = new Intent(this, Choose_Menu.class);
         button_modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(reintent);
+                textToSpeech.stop();
+                startActivity(reIntent);
             }
         });
 
-        final Intent numintent = new Intent(this, OrderNum.class);
+        final Intent numIntent = new Intent(this, OrderNum.class);
         button_payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(numintent);
+                textToSpeech.stop();
+                startActivity(numIntent);
             }
         });
     }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class CartList implements Serializable {
 
+    String id;
     String name;
     String size;
     String temp;
@@ -13,7 +14,8 @@ public class CartList implements Serializable {
     Integer quantity;
 
 
-    public CartList(String name, String size, String temp, ArrayList<String> custom, Integer price, Integer quantity){
+    public CartList(String id, String name, String size, String temp, ArrayList<String> custom, Integer price, Integer quantity){
+        this.id = id;
         this.name = name;
         this.size = size;
         this.temp = temp;

@@ -22,8 +22,8 @@
 
     <Button
         android:id="@+id/btnSpeech"
-        android:layout_width="408dp"
-        android:layout_height="271dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:background="@drawable/speak_button_round"
         android:text="말하기"
         android:textColor="@color/speak_text_color"
@@ -47,8 +47,8 @@
 
     <Button
         android:id="@+id/btnOK"
-        android:layout_width="413dp"
-        android:layout_height="289dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:background="@drawable/ok_button_round"
         android:text="확인"
         android:textColor="@color/ok_text_color"

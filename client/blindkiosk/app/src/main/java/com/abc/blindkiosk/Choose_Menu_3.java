@@ -105,7 +105,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
         if (storeName == "맥도날드") {
             textToSpeech.speak("세트의 경우 메뉴명을 버거이름을 말하고 끝에 '세트'를 붙여 말해주세요.", TextToSpeech.QUEUE_ADD, null);
         }
-        getUserSpeak("상단 버튼을 누르고 원하는 메뉴를 말해주세요.");
+        getUserSpeak("원하는 메뉴의 이름을 말해주세요.");
     }
 
     String getStringId() {
@@ -164,6 +164,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
         button_speak.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textToSpeech.stop();
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(Choose_Menu_3.this); //
                 mRecognizer.setRecognitionListener(listener);   //모든 콜백을 수신하는 리스너 설정
                 mRecognizer.startListening(intent);
@@ -249,7 +250,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
 
             if (type.equals("food")) {
                 menuName = textView.getText().toString();
-                textToSpeech.speak("원하는 메뉴가 " + menuName + "가 맞으면 하단 버튼을 누르고 아니라면 상단 버튼을 누르고 메뉴명을 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                textToSpeech.speak("원하는 메뉴가 " + menuName + "가 맞으면 하단 버튼을 누르고 아니라면 메뉴명을 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
             } else {
                 numberinfo = number.findNumber(textView.getText().toString());
                 if (numberinfo != null) {
@@ -279,7 +280,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                                     }
                                     foodInfo.put("size", sizeArray.get(Integer.parseInt(numberinfo) - 1));
                                     foodInfo.put("price", priceArray.get(Integer.parseInt(numberinfo) - 1));
-                                    textToSpeech.speak("선택하신 사이즈가 " + sizeArray.get(Integer.parseInt(numberinfo) - 1) + "사이즈가 맞으면 하단 버튼을 눌러주시고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("선택하신 사이즈가 " + sizeArray.get(Integer.parseInt(numberinfo) - 1) + "사이즈가 맞으면 하단 버튼을 눌러주시고 아니면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -300,7 +301,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
 
                                     foodInfo.put("toppingType", toppingType.get(set * 5 + Integer.parseInt(numberinfo) - 1));
                                     foodInfo.put("toppingPrice", Integer.parseInt(toppingPrice.get(set * 5 + Integer.parseInt(numberinfo) - 1)));
-                                    textToSpeech.speak(toppingType.get(set * 5 + Integer.parseInt(numberinfo) - 1) + " 토핑을 선택한 것이 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak(toppingType.get(set * 5 + Integer.parseInt(numberinfo) - 1) + " 토핑을 선택한 것이 맞으면 하단 버튼을 누르고 아니면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -309,19 +310,19 @@ public class Choose_Menu_3 extends AppCompatActivity {
                                 if (numberinfo.equals("1")) {
                                     try {
                                         foodInfo.put("temp", "ice");
-                                        textToSpeech.speak("아이스를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                        textToSpeech.speak("아이스를 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니라면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 } else if (numberinfo.equals("2")) {
                                     try {
                                         foodInfo.put("temp", "hot");
-                                        textToSpeech.speak("핫을 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                        textToSpeech.speak("핫을 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니라면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
                                 } else {
-                                    textToSpeech.speak("잘못된 대답입니다. 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("잘못된 대답입니다. 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 }
                                 break;
                             case "iceAmount":
@@ -335,7 +336,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                                     String iceType = iceList.get(Integer.parseInt(numberinfo) - 1);
                                     foodInfo.put("iceType", iceType);
                                     textToSpeech.speak("선택하신 얼음량은 " + iceType + " 입니다.", TextToSpeech.QUEUE_ADD, null);
-                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 아니라면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -351,7 +352,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                                     String sweetType = sweetList.get(Integer.parseInt(numberinfo) - 1);
                                     foodInfo.put("sweetType", sweetType);
                                     textToSpeech.speak("선택하신 당도는 " + sweetType + " 입니다.", TextToSpeech.QUEUE_ADD, null);
-                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 다시 선택하고 싶으면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak("맞으면 하단 버튼을 누르고 아니라면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -359,7 +360,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                             case "quantity":
                                 try {
                                     foodInfo.put("quantity", Integer.parseInt(numberinfo));
-                                    textToSpeech.speak(numberinfo + " 개 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니면 상단 버튼을 누르고 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                    textToSpeech.speak(numberinfo + " 개 선택하셨습니다. 맞으면 하단 버튼을 누르고 아니라면 다시 말해주세요.", TextToSpeech.QUEUE_ADD, null);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -370,7 +371,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                         }
                     }
                 } else {
-                    textToSpeech.speak("잘못된 답변입니다. 상단 버튼을 누르고 다시 말씀해 주세요.", TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.speak("잘못된 답변입니다. 다시 말씀해 주세요.", TextToSpeech.QUEUE_ADD, null);
                 }
             }
 
@@ -378,6 +379,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
             button_ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    textToSpeech.stop();
                     set = 0;
                     switch (type) {
                         case "food":
@@ -479,7 +481,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
         }
 
         if (!flag) {
-            getUserSpeak("선택하신 메뉴가 없습니다. 상단 버튼을 누르고 메뉴를 다시 말씀해 주세요.");
+            getUserSpeak("선택하신 메뉴가 없습니다. 메뉴를 다시 말씀해 주세요.");
         } else {
             try {
                 if(foodInfo.getJSONArray("size").length() < 2){
@@ -514,7 +516,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
             for (int i = 0; i < sizeList.size(); i++){
                 textToSpeech.speak((i + 1) + " 번 " + sizeList.get(i) + "사이즈", TextToSpeech.QUEUE_ADD, null);
             }
-            getUserSpeak("상단 버튼을 누르고 사이즈를 선택해 주세요.");
+            getUserSpeak("사이즈를 선택해 주세요.");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -559,7 +561,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                 textToSpeech.speak((i + 1) + "번" + toppingType.get(num + i) + "가격은" + toppingPrice.get(num + i) + "원", TextToSpeech.QUEUE_ADD, null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("상단 버튼을 누르고 추가하고 싶은 토핑 번호를 말해주시고, 원하는 토핑카테고리가 없을 경우 0번을 말해주세요.");
+            getUserSpeak("추가하고 싶은 토핑 번호를 말해주시고, 원하는 토핑카테고리가 없을 경우 0번을 말해주세요.");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -575,7 +577,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
         }
 
         type = "temp";
-        getUserSpeak("상단 버튼을 누르고 아이스를 원하시면 1번, 핫을 원하시면 2번을 말해 주세요.");
+        getUserSpeak("아이스를 원하시면 1번, 핫을 원하시면 2번을 말해 주세요.");
 
     }
 
@@ -598,7 +600,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                 textToSpeech.speak((i + 1) + "번" + iceType.get(i), TextToSpeech.QUEUE_ADD, null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("상단 버튼을 누르고 얼음량을 선택해 주세요.");
+            getUserSpeak("얼음량을 선택해 주세요.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -626,7 +628,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
                 textToSpeech.speak((i + 1) + "번" + sweetType.get(i), TextToSpeech.QUEUE_ADD, null);
             }
             textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-            getUserSpeak("상단 버튼을 누르고 당도를 선택해 주세요.");
+            getUserSpeak("당도를 선택해 주세요.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -634,7 +636,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
 
     void goQuantity() {
         type = "quantity";
-        getUserSpeak("상단 버튼을 누르고 수량을 얘기해 주세요. 단, 최대 수량은 5개 입니다.");
+        getUserSpeak("수량을 얘기해 주세요. 단, 최대 수량은 5개 입니다.");
     }
 
     void addMenu() {
@@ -643,6 +645,7 @@ public class Choose_Menu_3 extends AppCompatActivity {
             int price = foodInfo.getInt("price");
             price = price * foodInfo.getInt("quantity");
 
+            String id = foodInfo.getString("_id");
             String name = foodInfo.getString("name");
             Integer quantity = foodInfo.getInt("quantity");
             String size = "null";
@@ -667,14 +670,13 @@ public class Choose_Menu_3 extends AppCompatActivity {
                 }
             }
 
-
-            CartList cart = new CartList(name, size, temp, custom, price, quantity);
+            CartList cart = new CartList(id, name, size, temp, custom, price, quantity);
             cartList.add(cart);
 
             textToSpeech.speak(foodInfo.getString("name") + " 메뉴를 " + foodInfo.getInt("quantity") + "개 주문하셨습니다.", TextToSpeech.QUEUE_ADD, null);
             Log.d("Chk", foodInfo.toString());
 
-            getUserSpeak("상단 버튼을 누른 후 주문을 계속하고 싶으면 1번을 말하고 주문을 마치고 싶으면 0번을 말해주세요.");
+            getUserSpeak("주문을 계속하고 싶으면 1번을 말하고 주문을 마치고 싶으면 0번을 말해주세요.");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -682,8 +684,9 @@ public class Choose_Menu_3 extends AppCompatActivity {
     }
 
     void goLastOrder() {
-        Intent intent = new Intent(context, LastOrder.class);
+        Intent intent = new Intent(context, RecommendActivity.class);
         intent.putExtra("menuList", cartList);
+        intent.putExtra("storeId", storeId);
         startActivity(intent);
     }
 

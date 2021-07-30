@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -55,6 +56,7 @@ public class StoreActivity extends AppCompatActivity {
     int set = 0;
     List<String> stores;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,38 +69,38 @@ public class StoreActivity extends AppCompatActivity {
         intent = getIntent();
         context = getApplicationContext();
 
-        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(StoreActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
-            ActivityCompat.requestPermissions(StoreActivity.this, new String[]{Manifest.permission.INTERNET, Manifest.permission.RECORD_AUDIO}, 1);
-        } else {
-            intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
 
-            textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                @Override
-                public void onInit(int status) {
-                    if (status == TextToSpeech.SUCCESS) {
-                        textToSpeech.setLanguage(Locale.KOREAN);
-                        findUserLocation();
-                    }
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    textToSpeech.speak("앱을 사용하면서 선택사항을 다시 듣고싶으실 때는 다시 듣기라고 말해주시고 말을 할때는 상단의 말하기 버튼을 누른 후 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.setLanguage(Locale.KOREAN);
+                    intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+                    findUserLocation();
+
                 }
-            });
-            Toast.makeText(getApplicationContext(), "퍼미션 체크 완료.", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        }
     }
 
 
     void findUserLocation() {
+
+        Log.d("Chk", "위치찾기!!!!!!!!!!!!!!");
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        textToSpeech.speak("사용자의 위치를 탐색합니다.", TextToSpeech.QUEUE_ADD, null);
+
+        textToSpeech.speak("사용자의 위치를 탐색중입니다.", TextToSpeech.QUEUE_ADD, null);
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mLocationListener);
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, mLocationListener);
         } catch (SecurityException ex) {
             Toast.makeText(getApplicationContext(), "탐색 실패", Toast.LENGTH_SHORT).show();
         }
+
 
     }
 
@@ -123,11 +125,11 @@ public class StoreActivity extends AppCompatActivity {
         }
     };
 
-    void getUserSpeak(String guideText) {
-        textToSpeech.speak(guideText, TextToSpeech.QUEUE_ADD, null);
+    void getUserSpeak() {
         btnSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textToSpeech.stop();
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(StoreActivity.this); //
                 mRecognizer.setRecognitionListener(listener);   //모든 콜백을 수신하는 리스너 설정
                 mRecognizer.startListening(intent);
@@ -211,30 +213,34 @@ public class StoreActivity extends AppCompatActivity {
             for (int i = 0; i < matches.size(); i++) {
                 answer.setText(matches.get(i));
             }
-
-            answerInfo = number.findNumber(answer.getText().toString());
-            Toast.makeText(context, "사용자 답변 확인.", Toast.LENGTH_SHORT).show();
-            if (answerInfo == null) {
-                textToSpeech.speak("번호를 인식하지 못하였습니다. 화면 상단을 눌러 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+            if (answer.getText().toString().contains("다시듣기") || answer.getText().toString().contains("다시 듣기")) {
+                textToSpeech.speak("가게 목록을 다시 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                chooseStore();
             } else {
-                textToSpeech.speak("선택하신 번호가 " + answerInfo + "번이 맞으면 화면 하단을 눌러주시고 아니면 화면 상단을 눌러 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
-                btnOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        answer.setText(answerInfo);
-                        if (Integer.parseInt(answer.getText().toString()) == 0) {
-                            textToSpeech.speak("가게 목록을 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
-                            set += 1;
-                            chooseStore();
+                answerInfo = number.findNumberByCnt(answer.getText().toString(), stores.size());
+                Toast.makeText(context, "사용자 답변 확인.", Toast.LENGTH_SHORT).show();
+                if (answerInfo == null) {
+                    textToSpeech.speak("번호를 인식하지 못하였습니다. 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                } else {
+                    textToSpeech.speak("선택하신 번호가 " + answerInfo + "번이 맞으면 화면 하단을 눌러주시고 아니면 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    btnOK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            textToSpeech.stop();
+                            answer.setText(answerInfo);
+                            if (Integer.parseInt(answer.getText().toString()) == 0) {
+                                textToSpeech.speak("가게 목록을 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                                set += 1;
+                                chooseStore();
 
-                        } else {
-                            getStoreName();
+                            } else {
+                                getStoreName();
+                            }
+                            Toast.makeText(context, "다음 단계", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(context, "다음 단계", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+                }
             }
-
         }
 
 
@@ -280,10 +286,6 @@ public class StoreActivity extends AppCompatActivity {
 
     void chooseStore() {
         stores = getStoreList();
-        if (stores == null) {
-            textToSpeech.speak("주변 가게가 없습니다.", TextToSpeech.QUEUE_ADD, null);
-            return;
-        }
         if (set * 5 > stores.size()) {
             set = 0;
             textToSpeech.speak("모든 가게 정보를 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
@@ -296,8 +298,12 @@ public class StoreActivity extends AppCompatActivity {
             }
         }
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-        getUserSpeak("화면 상단을 눌러 가게 번호를 말씀해주시고 원하는 가게가 없으면 0번을 말씀해주세요.");
-
+        if (stores.size() <= Constants.TOTAL_SIZE) {
+            textToSpeech.speak("원하는 가게 번호를 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+        } else {
+            textToSpeech.speak("원하는 가게 번호를 말씀해주시고 없으면 0번을 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+        }
+        getUserSpeak();
     }
 
     void getStoreName() {
@@ -308,9 +314,16 @@ public class StoreActivity extends AppCompatActivity {
         if (storeName == null) {
             textToSpeech.speak("해당 가게에 대한 정보가 없습니다.", TextToSpeech.QUEUE_ADD, null);
         } else {
+            textToSpeech.stop();
             Intent storeNameIntent = new Intent(this, Choose_Menu.class);
             storeNameIntent.putExtra("storeName", storeName);
             startActivity(storeNameIntent);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        textToSpeech.stop();
     }
 }

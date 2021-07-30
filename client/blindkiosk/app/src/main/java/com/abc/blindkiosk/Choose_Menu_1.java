@@ -143,7 +143,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
             set = 0;
             textToSpeech.speak("모든 카테고리 정보를 다 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
         }
-        textToSpeech.speak("메뉴 카테고리는", TextToSpeech.QUEUE_ADD, null);
+        textToSpeech.speak("상위 메뉴 카테고리는", TextToSpeech.QUEUE_ADD, null);
         for (int i = set * 5; i < set * 5 + 5; i++) {
             if (i < categoryList.size()) {
                 MenuInfo category = categoryList.get(i);
@@ -153,7 +153,8 @@ public class Choose_Menu_1 extends AppCompatActivity {
         }
 
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-        getUserSpeak("화면 상단을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
+        tellUserNumberGuide("상위 메뉴 카테고리",categoryList.size());
+        getUserSpeak();
     }
 
     void getCategoryName() {
@@ -211,7 +212,8 @@ public class Choose_Menu_1 extends AppCompatActivity {
         }
 
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-        getUserSpeak("화면 상단을 눌러 카테고리 번호를 말씀해주시고 원하는 카테고리가 없으면 0번을 말씀해주세요.");
+        tellUserNumberGuide("하위 메뉴 카테고리",subcategoryList.size());
+        getUserSpeak();
     }
 
     void getSubcategoryName() {
@@ -265,9 +267,9 @@ public class Choose_Menu_1 extends AppCompatActivity {
             if (i < foodList.size()) {
                 FoodInfo food = foodList.get(i);
 
-                if(food.size==null) {
+                if (food.size == null) {
                     textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
-                }else {
+                } else {
                     textToSpeech.speak(i - set * 5 + 1 + "번 " + food.name + " " + food.size + "사이즈 " + food.price + "원", TextToSpeech.QUEUE_ADD, null);
                 }
                 numberCnt = i - set * 5 + 1;
@@ -275,7 +277,9 @@ public class Choose_Menu_1 extends AppCompatActivity {
         }
 
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-        getUserSpeak("화면 상단을 눌러 음식 번호를 말씀해주시고 원하는 음식이 없으면 0번을 말씀해주세요.");
+
+        tellUserNumberGuide("음식",foodList.size());
+        getUserSpeak();
     }
 
     void getFoodName() {
@@ -299,14 +303,15 @@ public class Choose_Menu_1 extends AppCompatActivity {
 
     void chooseTemp() {
         numberCnt = 2;
-        getUserSpeak("음료 종류를 선택합니다. 1번 ice, 2번 hot 입니다. 화면을 눌러 원하는 번호를 말씀해주세요.");
+        textToSpeech.speak("음료 종류를 선택합니다. 1번 ice, 2번 hot 입니다. 원하는 번호를 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+        getUserSpeak();
     }
 
     void getTemp() {
         if (answer.getText().toString().equals("1")) {
-            temp = ("ice");
+            temp = "ice";
         } else if (answer.getText().toString().equals("2")) {
-            temp = ("hot");
+            temp = "hot";
         }
         checkCustom();
     }
@@ -348,29 +353,34 @@ public class Choose_Menu_1 extends AppCompatActivity {
         executorService.shutdown();
     }
 
-    void getCustomName() {
-        if (customInfoOrder == userFood.customId.size() - 1) {
-            textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
-            customList = ((ArrayList<String>) customCartList);//커스텀 정보 담기
-            step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
-            chooseFoodQuantity();
-        } else {
+    void getCustomName(boolean iceSelection) {
+        if(iceSelection) {  //아이스 음료를 선택한 경우
             textToSpeech.speak(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1) + " 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
             customCartList.add(customInfo.type.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1));
 
             if (customInfo.price != null) {
                 price += Integer.valueOf(customInfo.price.get(Integer.parseInt(answer.getText().toString()) + set * 5 - 1));
             }
-            set = 0;
-            customInfoOrder += 1;
-
-            textToSpeech.speak("다음 커스텀으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
-            chooseCustom();
         }
+        set = 0;
+        customInfoOrder += 1;
+        if (customInfoOrder == userFood.customId.size()) {
+            textToSpeech.speak("모든 커스텀을 선택하셨습니다.", TextToSpeech.QUEUE_ADD, null);
+            customList = ((ArrayList<String>) customCartList);//커스텀 정보 담기
+            step = Constants.FOOD_QUANTITY_CHOOSE_STEPS;
+            chooseFoodQuantity();
+            return;
+        }
+        textToSpeech.speak("다음 커스텀으로 넘어갑니다.", TextToSpeech.QUEUE_ADD, null);
+        chooseCustom();
+
     }
 
     void chooseCustom() {
         setCustomInfo(userFood.customId.get(customInfoOrder));
+        if (customInfo.name.contains("얼음") && temp.equals("hot")) {
+            getCustomName(false);
+        }
         if (set * 5 > customInfo.type.size()) {
             set = 0;
             textToSpeech.speak("모든 정보를 다 보았습니다. 처음으로 돌아갑니다.", TextToSpeech.QUEUE_ADD, null);
@@ -393,22 +403,23 @@ public class Choose_Menu_1 extends AppCompatActivity {
         }
 
         textToSpeech.speak("입니다.", TextToSpeech.QUEUE_ADD, null);
-        getUserSpeak("화면 상단을 눌러 " + customInfo.name + " 번호를 말씀해주시고 원하는 " + customInfo.name + " 번호가 없으면 0번을 말씀해주세요.");
+        tellUserNumberGuide(customInfo.name,customInfo.type.size());
+        getUserSpeak();
 
     }
 
     void chooseFoodQuantity() {
         numberCnt = 5;
-        getUserSpeak("주문할 개수를 번호로 말씀해주세요. 1번은 1개 입니다.");
+        textToSpeech.speak("주문할 개수를 번호로 말씀해주세요. 1번은 1개 입니다.", TextToSpeech.QUEUE_ADD, null);
+        getUserSpeak();
     }
 
     void payOrAdd() {
         textToSpeech.speak("장바구니에 음식을 담았습니다.", TextToSpeech.QUEUE_ADD, null);
         numberCnt = 3;
         step = Constants.CASH_OR_ADD_STEPS;
-        getUserSpeak("결제를 원하시면 1번, 하위 카테고리에서 주문을 원하시면 2번, 상위 카테고리에서 주문을 원하시면 3번을 눌러주세요.");
-
-
+        textToSpeech.speak("결제를 원하시면 1번, 하위 카테고리에서 주문을 원하시면 2번, 상위 카테고리에서 주문을 원하시면 3번을 눌러주세요.", TextToSpeech.QUEUE_ADD, null);
+        getUserSpeak();
     }
 
     void getPayOrAddInfo() {
@@ -449,11 +460,11 @@ public class Choose_Menu_1 extends AppCompatActivity {
         startActivity(cartIntent);
     }
 
-    void getUserSpeak(String guideText) {
-        textToSpeech.speak(guideText, TextToSpeech.QUEUE_ADD, null);
+    void getUserSpeak() {
         btnSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                textToSpeech.stop();
                 mRecognizer = SpeechRecognizer.createSpeechRecognizer(Choose_Menu_1.this); //
                 mRecognizer.setRecognitionListener(listener);   //모든 콜백을 수신하는 리스너 설정
                 mRecognizer.startListening(intent);
@@ -520,7 +531,7 @@ public class Choose_Menu_1 extends AppCompatActivity {
                     break;
                 case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
                     message = "말하는 시간초과";
-                    textToSpeech.speak("말하는 시간이 초과되었습니다. 화면 상단을 눌러 다시 시도해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    textToSpeech.speak("말하는 시간이 초과되었습니다. 잠시 후에 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
                     break;
                 default:
                     message = "알 수 없는 오류임";
@@ -537,77 +548,95 @@ public class Choose_Menu_1 extends AppCompatActivity {
             for (int i = 0; i < matches.size(); i++) {
                 answer.setText(matches.get(i));
             }
-
-            answerInfo = number.findNumberByCnt(answer.getText().toString(), numberCnt);
-
-            if (answerInfo == null) {
-                textToSpeech.speak("번호를 인식하지 못하였습니다. 화면 상단을 눌러 번호를 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+            if (answer.getText().toString().contains("다시 듣기")) {
+                textToSpeech.speak("다시 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                switch (step) {
+                    case Constants.CATEGORY_CHOOSE_STEPS:
+                        chooseCategory();
+                        break;
+                    case Constants.SUBCATEGORY_CHOOSE_STEPS:
+                        chooseSubcategory();
+                        break;
+                    case Constants.FOOD_CHOOSE_STEPS:
+                        chooseFood();
+                        break;
+                    case Constants.CUSTOM_CHOOSE_STEPS:
+                        textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                        set += 1;
+                        chooseCustom();
+                        break;
+                }
             } else {
-                textToSpeech.speak("선택하신 번호가 " + answerInfo + "번이 맞으면 화면 하단을 눌러주시고 아니면 화면 상단을 눌러 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
-                btnOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        answer.setText(answerInfo);
-                        if (Integer.parseInt(answer.getText().toString()) == 0) {
-                            switch (step) {
-                                case Constants.CATEGORY_CHOOSE_STEPS:
-                                    textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
-                                    set += 1;
-                                    chooseCategory();
-                                    break;
-                                case Constants.SUBCATEGORY_CHOOSE_STEPS:
-                                    textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
-                                    set += 1;
-                                    chooseSubcategory();
-                                    break;
-                                case Constants.FOOD_CHOOSE_STEPS:
-                                    textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
-                                    set += 1;
-                                    chooseFood();
-                                    break;
-                                case Constants.CUSTOM_CHOOSE_STEPS:
-                                    textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
-                                    set += 1;
-                                    chooseCustom();
-                                    break;
-                                default:
-                                    textToSpeech.speak("올바른 번호를 인식하지 못하였습니다. 화면 상단을 눌러 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
-                                    break;
+                answerInfo = number.findNumberByCnt(answer.getText().toString(), numberCnt);
+                if (answerInfo == null) {
+                    textToSpeech.speak("번호를 인식하지 못하였습니다. 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                } else {
+                    textToSpeech.speak("선택하신 번호가 " + answerInfo + "번이 맞으면 화면 하단을 눌러주시고 아니면 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                    btnOK.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            textToSpeech.stop();
+                            answer.setText(answerInfo);
+                            if (Integer.parseInt(answer.getText().toString()) == 0) {
+                                switch (step) {
+                                    case Constants.CATEGORY_CHOOSE_STEPS:
+                                        textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                                        set += 1;
+                                        chooseCategory();
+                                        break;
+                                    case Constants.SUBCATEGORY_CHOOSE_STEPS:
+                                        textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                                        set += 1;
+                                        chooseSubcategory();
+                                        break;
+                                    case Constants.FOOD_CHOOSE_STEPS:
+                                        textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                                        set += 1;
+                                        chooseFood();
+                                        break;
+                                    case Constants.CUSTOM_CHOOSE_STEPS:
+                                        textToSpeech.speak("번호를 새로 알려드립니다.", TextToSpeech.QUEUE_ADD, null);
+                                        set += 1;
+                                        chooseCustom();
+                                        break;
+                                    default:
+                                        textToSpeech.speak("올바른 번호를 인식하지 못하였습니다. 다시 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+                                        break;
+                                }
+
+
+                            } else {
+                                switch (step) {
+                                    case Constants.CATEGORY_CHOOSE_STEPS:
+                                        getCategoryName();
+                                        break;
+                                    case Constants.SUBCATEGORY_CHOOSE_STEPS:
+                                        getSubcategoryName();
+                                        break;
+                                    case Constants.FOOD_CHOOSE_STEPS:
+                                        getFoodName();
+                                        break;
+                                    case Constants.CUSTOM_CHOOSE_STEPS:
+                                        getCustomName(true);
+                                        break;
+                                    case Constants.TEMP_CHOOSE_STEPS:
+                                        getTemp();
+                                        break;
+                                    case Constants.FOOD_QUANTITY_CHOOSE_STEPS:
+                                        quantity = (Integer.parseInt(answer.getText().toString()));    //장바구니에 수량 저장
+                                        payOrAdd();
+                                        break;
+                                    case Constants.CASH_OR_ADD_STEPS:
+                                        getPayOrAddInfo();
+                                        break;
+                                }
+
                             }
-
-
-                        } else {
-                            switch (step) {
-                                case Constants.CATEGORY_CHOOSE_STEPS:
-                                    getCategoryName();
-                                    break;
-                                case Constants.SUBCATEGORY_CHOOSE_STEPS:
-                                    getSubcategoryName();
-                                    break;
-                                case Constants.FOOD_CHOOSE_STEPS:
-                                    getFoodName();
-                                    break;
-                                case Constants.CUSTOM_CHOOSE_STEPS:
-                                    getCustomName();
-                                    break;
-                                case Constants.TEMP_CHOOSE_STEPS:
-                                    getTemp();
-                                    break;
-                                case Constants.FOOD_QUANTITY_CHOOSE_STEPS:
-                                    quantity = (Integer.parseInt(answer.getText().toString()));    //장바구니에 수량 저장
-                                    payOrAdd();
-                                    break;
-                                case Constants.CASH_OR_ADD_STEPS:
-                                    getPayOrAddInfo();
-                                    break;
-                            }
-
+                            Toast.makeText(context, "다음 단계", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(context, "다음 단계", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    });
+                }
             }
-
         }
 
 
@@ -622,5 +651,11 @@ public class Choose_Menu_1 extends AppCompatActivity {
         }
     };
 
-
+    void tellUserNumberGuide(String type, int listSize){
+        if(listSize<=Constants.TOTAL_SIZE){
+            textToSpeech.speak("원하는 " +type+" 번호를 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+        }else {
+            textToSpeech.speak("원하는 "+type+" 번호를 말씀해주시고 없으면 0번을 말씀해주세요.", TextToSpeech.QUEUE_ADD, null);
+        }
+    }
 }

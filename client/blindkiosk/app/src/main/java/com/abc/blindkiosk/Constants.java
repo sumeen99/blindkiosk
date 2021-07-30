@@ -8,4 +8,6 @@ public class Constants {
     public static final int CUSTOM_CHOOSE_STEPS = 5;
     public static final int TEMP_CHOOSE_STEPS = 6;
     public static final int CASH_OR_ADD_STEPS = 7;
+
+    public static final int TOTAL_SIZE = 5;
 }
